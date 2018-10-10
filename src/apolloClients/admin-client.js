@@ -10,7 +10,7 @@ const stateLink = withClientState({resolvers, cache, defaults});
 
 const adminClient = new ApolloClient({
 	link: ApolloLink.from([stateLink, new HttpLink({
-		uri: "http://localhost:3001/admin/graphql",
+		uri: "http://localhost:3001/graphql",
 		credentials: "include"
 	})]),
 	cache: cache
