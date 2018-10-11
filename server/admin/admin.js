@@ -1,14 +1,15 @@
+var uudiv4 = require("uuid/v4");
+
 const checkSession = session => {
   return session.userId || false;
 };
 
 module.exports.adminTypeDefs = adminTypeDefs = `
   type Query {
-		getItem: String
-		checkAuth: Boolean
+    adminLogIn(login: String, password: String): Boolean
+    checkAuth: Boolean
   } 
   type Mutation {
-    adminLogIn(login: String, password: String): Boolean
     logOutMutation: Boolean
   }
   
@@ -19,26 +20,19 @@ module.exports.adminTypeDefs = adminTypeDefs = `
 
 module.exports.rootAdmin = rootAdmin = {
   Query: {
-    getItem: (obj, arg, { session }) => {
-      if (!checkSession(session)) {
-        return "unauthorized";
-      }
-      return "swfewfwe";
-    },
     checkAuth: (obj, arg, { session }) => {
       return session.userId ? true : false;
-    }
-  },
-  Mutation: {
+    },
     adminLogIn: (obj, arg, { session }) => {
-      console.log(arg.login, arg.password);
       if (arg.login === "admin" && arg.password === "admin") {
-        session.userId = 777;
+        session.userId = uudiv4();
         return true;
       } else {
         return false;
       }
-    },
+    }
+  },
+  Mutation: {
     logOutMutation: (obj, arg, req) => {
       req.session.destroy();
       return true;

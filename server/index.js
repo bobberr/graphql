@@ -27,7 +27,7 @@ app.use(
 );
 app.use(
   session({
-    name: "qid",
+    name: "session_id",
     secret: secretObject.sessionSecret,
     resave: false,
     saveUninitialized: false,
@@ -47,7 +47,6 @@ app.use(
   "/graphql",
   bodyParser.json(),
   (req, res, next) => {
-    console.log(req.session);
     next();
   },
   graphqlHTTP({

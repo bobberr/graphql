@@ -1,12 +1,11 @@
 import React, { Component } from "react";
 import "./App.css";
-import { Router, Route, Switch } from "react-router-dom";
+import { Router, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import { ApolloProvider } from "react-apollo";
 import adminClient from "./apolloClients/admin-client";
 import AdminLogin from "./componentsAdmin/AdminLogin";
-import AdminPanel from "./componentsAdmin/AdminPanel";
-import ProtectedRoute from "./components/ProtectedRoute";
+import AdminDashboard from "./componentsAdmin/AdminDashboard";
 
 export const history = createBrowserHistory();
 
@@ -18,11 +17,7 @@ class App extends Component {
           <Router history={history}>
             <div>
               <Route path="/admin-login" component={AdminLogin} exact />
-              <ProtectedRoute
-                path="/admin-panel"
-                component={AdminPanel}
-                exact
-              />
+              <Route path="/admin-dashboard" component={AdminDashboard} exact />
             </div>
           </Router>
         </ApolloProvider>
