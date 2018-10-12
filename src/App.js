@@ -6,7 +6,9 @@ import { ApolloProvider } from "react-apollo";
 import adminClient from "./apolloClients/admin-client";
 import AdminLogin from "./componentsAdmin/AdminLogin";
 import AdminDashboard from "./componentsAdmin/AdminDashboard";
+import NoPermissions from "./components/NoPermissions";
 
+// history for react router
 export const history = createBrowserHistory();
 
 class App extends Component {
@@ -16,8 +18,9 @@ class App extends Component {
         <ApolloProvider client={adminClient}>
           <Router history={history}>
             <div>
-              <Route path="/admin-login" component={AdminLogin} exact />
-              <Route path="/admin-dashboard" component={AdminDashboard} exact />
+              <Route exact path="/admin-login" component={AdminLogin} />
+              <Route exact path="/unauthorized" component={NoPermissions} />
+              <Route exact path="/admin-dashboard" component={AdminDashboard} />
             </div>
           </Router>
         </ApolloProvider>

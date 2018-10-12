@@ -2,12 +2,26 @@ import React from "react";
 import gql from "graphql-tag";
 import { history } from "../App";
 import { withApollo } from "react-apollo";
+import { withStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+
+import PropTypes from "prop-types";
 
 const logInAdminQuery = gql`
   query logInAdmin($login: String!, $password: String!) {
     adminLogIn(login: $login, password: $password)
   }
 `;
+
+const styles = theme => ({
+  container: {
+    height: "100vh",
+    background: "#232431"
+  },
+  card: {
+    maxWidth: "500px"
+  }
+});
 
 class AdminLogin extends React.Component {
   state = {};
@@ -37,27 +51,25 @@ class AdminLogin extends React.Component {
       : this.setState({ logInError: true });
   };
 
-  // After successful mutation
-  _onCompletedMutation(data) {
-    if (data.adminLogIn) {
-      history.push("/admin-dashboard");
-    } else {
-      this.setState({ logInError: true });
-    }
-  }
-
   render() {
+    const { classes } = this.props;
     return (
-      <div>
-        <form onSubmit={this._submitLogIn}>
-          <input type="text" onChange={this._changeLogIn} />
-          <input type="password" onChange={this._changePassword} />
-          <button>Log In</button>
-        </form>
+      <div className={classes.container}>
+        <Card className={classes.card}>
+          <form onSubmit={this._submitLogIn}>
+            <input type="text" onChange={this._changeLogIn} />
+            <input type="password" onChange={this._changePassword} />
+            <button>Log In</button>
+          </form>
+        </Card>
         {this.state.logInError && <p>Wrong login or password</p>}
       </div>
     );
   }
 }
 
-export default withApollo(AdminLogin);
+AdminLogin.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+export default withApollo(withStyles(styles)(AdminLogin));
