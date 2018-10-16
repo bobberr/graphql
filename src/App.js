@@ -15,7 +15,8 @@ export const history = createBrowserHistory();
 
 const theme = createMuiTheme({
   typography: {
-    fontFamily: "Poppins, sans-serif"
+    fontFamily: "Poppins, sans-serif",
+    useNextVariants: true
   }
 });
 
