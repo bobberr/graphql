@@ -10,7 +10,7 @@ import Input from "@material-ui/core/Input";
 import FormControl from "@material-ui/core/FormControl";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
-import Icon from "@material-ui/core/Icon";
+import FormHelperText from "@material-ui/core/FormHelperText";
 
 const logInAdminQuery = gql`
   query logInAdmin($login: String!, $password: String!) {
@@ -28,7 +28,8 @@ const styles = theme => ({
   },
   card: {
     width: "500px",
-    background: "#27293D"
+    background: "#27293D",
+    border: "2px solid #1F8EF1"
   },
   title: {
     color: "white",
@@ -48,20 +49,32 @@ const styles = theme => ({
     }
   },
   inputLabel: {
-    color: "white",
+    color: "#9a9a9a",
     "&$inputLabelFocused": {
-      color: "white"
+      color: "#9a9a9a"
     }
   },
   inputLabelFocused: {},
   inputRoot: {
-    color: "white"
+    color: "#9a9a9a"
   },
   formControl: {
     marginBottom: "10px"
   },
   rightIcon: {
     marginRight: "20px"
+  },
+  button: {
+    alignSelf: "center",
+    width: "160px",
+    margin: "20px 0"
+  },
+  helperText: {
+    color: "#CA52E4"
+  },
+  formControlWithHelperText: {
+    marginBottom: "10px",
+    height: "70px"
   }
 });
 
@@ -101,8 +114,8 @@ class AdminLogin extends React.Component {
     return (
       <div className={classes.container}>
         <Card className={classes.card}>
-          <Typography className={classes.title} component="h2" variant="h4">
-            Log In
+          <Typography className={classes.title} component="h2">
+            Welcome, admin.
           </Typography>
           <form onSubmit={this._submitLogIn} className={classes.form}>
             <FormControl
@@ -130,7 +143,7 @@ class AdminLogin extends React.Component {
             </FormControl>
             <FormControl
               classes={{
-                root: classes.formControl
+                root: classes.formControlWithHelperText
               }}
               required={true}
             >
@@ -150,14 +163,27 @@ class AdminLogin extends React.Component {
                   underline: classes.inputAfter
                 }}
               />
+              {this.state.logInError && (
+                <FormHelperText
+                  classes={{
+                    root: classes.helperText
+                  }}
+                >
+                  You probably entered wrong login or password
+                </FormHelperText>
+              )}
             </FormControl>
-            <button>Log In</button>
-            <Button variant="contained" color="primary">
-              Log In
-              <Icon className={classes.rightIcon}>send</Icon>
+            <Button
+              classes={{
+                root: classes.button
+              }}
+              variant="outlined"
+              color="primary"
+              type="submit"
+            >
+              Send
             </Button>
           </form>
-          {this.state.logInError && <p>Wrong login or password</p>}
         </Card>
       </div>
     );
