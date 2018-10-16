@@ -7,23 +7,37 @@ import adminClient from "./apolloClients/admin-client";
 import AdminLogin from "./componentsAdmin/AdminLogin";
 import AdminDashboard from "./componentsAdmin/AdminDashboard";
 import NoPermissions from "./components/NoPermissions";
+import MuiThemeProvider from "@material-ui/core/styles/MuiThemeProvider";
+import { createMuiTheme } from "@material-ui/core/styles";
 
 // history for react router
 export const history = createBrowserHistory();
+
+const theme = createMuiTheme({
+  typography: {
+    fontFamily: "Poppins, sans-serif"
+  }
+});
 
 class App extends Component {
   render() {
     return (
       <div>
-        <ApolloProvider client={adminClient}>
-          <Router history={history}>
-            <div>
-              <Route exact path="/admin-login" component={AdminLogin} />
-              <Route exact path="/unauthorized" component={NoPermissions} />
-              <Route exact path="/admin-dashboard" component={AdminDashboard} />
-            </div>
-          </Router>
-        </ApolloProvider>
+        <MuiThemeProvider theme={theme}>
+          <ApolloProvider client={adminClient}>
+            <Router history={history}>
+              <div>
+                <Route exact path="/admin-login" component={AdminLogin} />
+                <Route exact path="/unauthorized" component={NoPermissions} />
+                <Route
+                  exact
+                  path="/admin-dashboard"
+                  component={AdminDashboard}
+                />
+              </div>
+            </Router>
+          </ApolloProvider>
+        </MuiThemeProvider>
       </div>
     );
   }

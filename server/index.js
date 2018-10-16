@@ -12,10 +12,7 @@ var bodyParser = require("body-parser");
 var secretObject = require("./admin/secrets");
 var MongoStore = require("connect-mongo")(session);
 
-mongoose.connect(
-  secretObject.dbconnection,
-  { useNewUrlParser: true }
-);
+mongoose.connect(secretObject.dbconnection);
 
 var app = express();
 

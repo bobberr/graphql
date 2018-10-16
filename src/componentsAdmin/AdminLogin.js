@@ -4,7 +4,10 @@ import { history } from "../App";
 import { withApollo } from "react-apollo";
 import { withStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
-
+import Typography from "@material-ui/core/Typography";
+import TextField from "@material-ui/core/TextField";
+import InputLabel from "@material-ui/core/InputLabel";
+import Input from "@material-ui/core/Input";
 import PropTypes from "prop-types";
 
 const logInAdminQuery = gql`
@@ -16,15 +19,48 @@ const logInAdminQuery = gql`
 const styles = theme => ({
   container: {
     height: "100vh",
-    background: "#232431"
+    background: "#232431",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
   },
   card: {
-    maxWidth: "500px"
+    width: "500px",
+    background: "#27293D"
+  },
+  title: {
+    color: "white",
+    fontSize: "24px",
+    fontWeight: "300",
+    textAlign: "center",
+    margin: "30px"
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    padding: "0px 100px"
+  },
+  inputRoot: {
+    color: "white",
+    "&:after": {
+      borderBottomColor: "#1F8EF1"
+    }
+  },
+  inputLabel: {
+    color: "white"
+  },
+  inputLabelFocused: {
+    "&$focused": {
+      color: "white"
+    }
   }
 });
 
 class AdminLogin extends React.Component {
-  state = {};
+  state = {
+    login: "",
+    password: ""
+  };
 
   //	Inputing login to state
   _changeLogIn = e => {
@@ -56,13 +92,17 @@ class AdminLogin extends React.Component {
     return (
       <div className={classes.container}>
         <Card className={classes.card}>
-          <form onSubmit={this._submitLogIn}>
-            <input type="text" onChange={this._changeLogIn} />
+          <Typography className={classes.title} component="h2">
+            Log In
+          </Typography>
+          <form onSubmit={this._submitLogIn} className={classes.form}>
+            <InputLabel>Admin login</InputLabel>
+            <Input onChange={this._changeLogIn} type="text" />
             <input type="password" onChange={this._changePassword} />
             <button>Log In</button>
           </form>
+          {this.state.logInError && <p>Wrong login or password</p>}
         </Card>
-        {this.state.logInError && <p>Wrong login or password</p>}
       </div>
     );
   }
