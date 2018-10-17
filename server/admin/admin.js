@@ -1,14 +1,18 @@
 var uudiv4 = require("uuid/v4");
-
-const checkSession = session => {
-  return session.userId || false;
-};
+var brandModel = require("../models/BrandModel");
 
 module.exports.adminTypeDefs = adminTypeDefs = `
   type Query {
     adminLogIn(login: String, password: String): Boolean
     checkAuth: Boolean
+    getAllBrands: [Brand]
   } 
+
+  type Brand {
+    id: ID
+    name: String
+  }
+
   type Mutation {
     logOutMutation: Boolean
   }
@@ -30,6 +34,9 @@ module.exports.rootAdmin = rootAdmin = {
       } else {
         return false;
       }
+    },
+    getAllBrands: async () => {
+      return await brandModel.find({});
     }
   },
   Mutation: {

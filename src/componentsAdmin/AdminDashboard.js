@@ -8,7 +8,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import { Route, Link } from "react-router-dom";
 import Drawer from "@material-ui/core/Drawer";
-import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import BrandsPage from "./BrandsPage";
@@ -17,6 +16,7 @@ import SeriesPage from "./SeriesPage";
 const styles = theme => ({
   container: {
     background: "#232431",
+    color: "white",
     height: "100vh",
     flexGrow: 1,
     zIndex: 1,
@@ -25,7 +25,7 @@ const styles = theme => ({
     display: "flex"
   },
   appBar: {
-    background: "#232431",
+    background: "#27293D",
     position: "absolute",
     zIndex: "10000"
   },
@@ -37,13 +37,19 @@ const styles = theme => ({
   toolbar: theme.mixins.toolbar,
   link: {
     color: "white",
-    textDecoration: "none"
+    display: "block",
+    textDecoration: "none",
+    padding: "11px 24px",
+    width: "100%"
   },
   content: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
-    minWidth: 0
+    minWidth: 0,
+    backgroundColor: "#232431"
+  },
+  listItem: {
+    padding: 0
   }
 });
 
@@ -66,7 +72,12 @@ class AdminDashboard extends React.Component {
   render() {
     const { classes } = this.props;
     const links = linksConfig.map((link, i) => (
-      <ListItem key={i} divider button={true}>
+      <ListItem
+        key={i}
+        divider
+        classes={{ root: classes.listItem }}
+        button={true}
+      >
         <Link className={classes.link} to={link.path}>
           {link.name}
         </Link>
