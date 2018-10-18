@@ -83,6 +83,7 @@ class AdminDashboard extends React.Component {
         </Link>
       </ListItem>
     ));
+
     return (
       <div className={classes.container}>
         <AppBar className={classes.appBar}>

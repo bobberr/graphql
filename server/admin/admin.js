@@ -35,8 +35,8 @@ module.exports.rootAdmin = rootAdmin = {
         return false;
       }
     },
-    getAllBrands: async () => {
-      return await brandModel.find({});
+    getAllBrands: (obj, arg, req) => {
+      return brandModel.find({});
     }
   },
   Mutation: {
