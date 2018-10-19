@@ -5,10 +5,14 @@ import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import Loading from "../components/Loading";
 import BrandsList from "./brandsPageComponents/BrandsList";
+import AddBrand from "./brandsPageComponents/AddBrand";
 
 const styles = theme => ({
   container: {
     height: "100%"
+  },
+  mainArea: {
+    display: "flex"
   }
 });
 
@@ -45,7 +49,10 @@ class BrandsPage extends React.Component {
         {this.state.loading ? (
           <Loading />
         ) : (
-          <BrandsList brands={this.state.brands} />
+          <div className={classes.mainArea}>
+            <BrandsList brands={this.state.brands} />
+            <AddBrand />
+          </div>
         )}
       </div>
     );
