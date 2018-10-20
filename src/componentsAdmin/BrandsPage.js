@@ -5,7 +5,7 @@ import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import Loading from "../components/Loading";
 import BrandsList from "./brandsPageComponents/BrandsList";
-import AddBrand from "./brandsPageComponents/AddBrand";
+import AddBrandForm from "./brandsPageComponents/AddBrandForm";
 
 const styles = theme => ({
   container: {
@@ -51,7 +51,7 @@ class BrandsPage extends React.Component {
         ) : (
           <div className={classes.mainArea}>
             <BrandsList brands={this.state.brands} />
-            <AddBrand />
+            <AddBrandForm />
           </div>
         )}
       </div>

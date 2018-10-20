@@ -1,20 +1,28 @@
 var uudiv4 = require("uuid/v4");
 var brandModel = require("../models/BrandModel");
+var { PubSub } = require("apollo-server-express");
+var subscriptionEvents = require("./subscriptionEvents");
+
+var pubSub = new PubSub();
 
 module.exports.adminTypeDefs = adminTypeDefs = `
   type Query {
-    adminLogIn(login: String, password: String): Boolean
+    adminLogIn(login: String!, password: String!): Boolean
     checkAuth: Boolean
     getAllBrands: [Brand]
-  } 
+  }
+
+  type Mutation {
+    addBrand: Brand
+  }
+
+  type Subscription {
+    brandAdded: Brand
+  }
 
   type Brand {
     id: ID
     name: String
-  }
-
-  type Mutation {
-    logOutMutation: Boolean
   }
   
   type Test {
@@ -40,9 +48,14 @@ module.exports.rootAdmin = rootAdmin = {
     }
   },
   Mutation: {
-    logOutMutation: (obj, arg, req) => {
+    addBrand: (obj, arg, req) => {
       req.session.destroy();
       return true;
+    }
+  },
+  Subscription: {
+    brandAdded: {
+      subscribe: () => pubSub.asyncIterator([subscriptionEvents.BRAND_ADDED])
     }
   }
 };
