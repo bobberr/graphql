@@ -7,12 +7,11 @@ var rootAdmin = require("./admin/admin").rootAdmin;
 var session = require("express-session");
 // var bodyParser = require("body-parser");
 var secretObject = require("./admin/secrets");
-var { ApolloServer, PubSub } = require("apollo-server-express");
+var { ApolloServer } = require("apollo-server-express");
 var MongoStore = require("connect-mongo")(session);
 
 mongoose.connect(secretObject.dbconnection);
 
-var pubSub = new PubSub();
 var app = express();
 
 app.use(
@@ -27,11 +26,6 @@ app.use(
     }
   })
 );
-
-var adminSchema = makeExecutableSchema({
-  typeDefs: adminTypeDefs,
-  resolvers: rootAdmin
-});
 
 var apolloServer = new ApolloServer({
   typeDefs: adminTypeDefs,

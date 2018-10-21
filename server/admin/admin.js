@@ -1,5 +1,5 @@
 var uudiv4 = require("uuid/v4");
-var brandModel = require("../models/BrandModel");
+var BrandModel = require("../models/BrandModel");
 var { PubSub } = require("apollo-server-express");
 var subscriptionEvents = require("./subscriptionEvents");
 
@@ -13,7 +13,7 @@ module.exports.adminTypeDefs = adminTypeDefs = `
   }
 
   type Mutation {
-    addBrand: Brand
+    addBrand(name: String!): Brand
   }
 
   type Subscription {
@@ -44,11 +44,11 @@ module.exports.rootAdmin = rootAdmin = {
       }
     },
     getAllBrands: (obj, arg, req) => {
-      return brandModel.find({});
+      return BrandModel.find({});
     }
   },
   Mutation: {
-    addBrand: (obj, arg, req) => {
+    addBrand: (obj, { name }, req) => {
       req.session.destroy();
       return true;
     }
