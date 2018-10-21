@@ -1,5 +1,4 @@
 var express = require("express");
-var { makeExecutableSchema } = require("graphql-tools");
 var port = process.env.PORT || 3001;
 var mongoose = require("mongoose");
 var adminTypeDefs = require("./admin/admin").adminTypeDefs;
@@ -9,6 +8,7 @@ var session = require("express-session");
 var secretObject = require("./admin/secrets");
 var { ApolloServer } = require("apollo-server-express");
 var MongoStore = require("connect-mongo")(session);
+var http = require("http");
 
 mongoose.connect(secretObject.dbconnection);
 
@@ -42,6 +42,10 @@ apolloServer.applyMiddleware({
   }
 });
 
-app.listen(port, () => {
+var httpServer = http.createServer(app);
+
+apolloServer.installSubscriptionHandlers(httpServer);
+
+httpServer.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
