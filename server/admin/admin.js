@@ -21,7 +21,7 @@ module.exports.adminTypeDefs = adminTypeDefs = `
   }
 
   type Brand {
-    id: ID
+    _id: ID
     name: String
   }
   
@@ -48,9 +48,15 @@ module.exports.rootAdmin = rootAdmin = {
     }
   },
   Mutation: {
-    addBrand: (obj, { name }, req) => {
-      req.session.destroy();
-      return true;
+    addBrand: async (obj, { name }, req) => {
+      const newBrand = new BrandModel({ name });
+      try {
+        await newBrand.save();
+      } catch (err) {
+        console.log(err);
+      }
+      pubSub.publish(subscriptionEvents.BRAND_ADDED, { brandAdded: newBrand });
+      return newBrand;
     }
   },
   Subscription: {

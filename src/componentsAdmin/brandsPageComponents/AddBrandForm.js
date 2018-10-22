@@ -5,6 +5,9 @@ import Typography from "@material-ui/core/Typography";
 import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input";
 import FormControl from "@material-ui/core/FormControl";
+import Button from "@material-ui/core/Button";
+import { withApollo } from "react-apollo";
+import gql from "graphql-tag";
 
 const classes = theme => ({
   addBrandContainer: {
@@ -35,6 +38,14 @@ const classes = theme => ({
   }
 });
 
+const addBrandMutation = gql`
+  mutation AddBrandFormMutation($name: String!) {
+    addBrand(name: $name) {
+      name
+    }
+  }
+`;
+
 class AddBrandForm extends React.Component {
   state = {
     brandName: ""
@@ -42,7 +53,12 @@ class AddBrandForm extends React.Component {
 
   _submitAddBrand = e => {
     e.preventDefault();
-    console.log(this.state.brandName);
+    this.props.client.mutate({
+      mutation: addBrandMutation,
+      variables: {
+        name: this.state.brandName
+      }
+    });
   };
 
   _changeBrandName = e => {
@@ -89,6 +105,16 @@ class AddBrandForm extends React.Component {
               }}
             />
           </FormControl>
+          <Button
+            classes={{
+              root: classes.button
+            }}
+            variant="outlined"
+            color="primary"
+            type="submit"
+          >
+            Add brand
+          </Button>
         </form>
       </div>
     );
@@ -99,4 +125,4 @@ AddBrandForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(classes)(AddBrandForm);
+export default withStyles(classes)(withApollo(AddBrandForm));

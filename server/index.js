@@ -10,7 +10,10 @@ var { ApolloServer } = require("apollo-server-express");
 var MongoStore = require("connect-mongo")(session);
 var http = require("http");
 
-mongoose.connect(secretObject.dbconnection);
+mongoose.connect(
+  secretObject.dbconnection,
+  { useNewUrlParser: true }
+);
 
 var app = express();
 
