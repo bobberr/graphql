@@ -23,7 +23,7 @@ const styles = {
   }
 };
 
-const protectedRoute = WrappedComponent => {
+const ProtectedRoute = WrappedComponent => {
   return class ProtectedRoute extends React.Component {
     state = {
       loading: true
@@ -57,4 +57,4 @@ const protectedRoute = WrappedComponent => {
   };
 };
 
-export default protectedRoute;
+export default ProtectedRoute;

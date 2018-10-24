@@ -1,6 +1,6 @@
 import React from "react";
 import { withApollo } from "react-apollo";
-import protectedRoute from "../components/protectedRoute";
+import ProtectedRoute from "../components/ProtectedRoute";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import AppBar from "@material-ui/core/AppBar";
@@ -116,4 +116,4 @@ AdminDashboard.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default protectedRoute(withApollo(withStyles(styles)(AdminDashboard)));
+export default ProtectedRoute(withApollo(withStyles(styles)(AdminDashboard)));

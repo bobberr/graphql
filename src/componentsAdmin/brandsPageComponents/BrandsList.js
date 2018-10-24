@@ -8,7 +8,6 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input";
 import FormControl from "@material-ui/core/FormControl";
 import PropTypes from "prop-types";
-import { Subscription } from "react-apollo";
 import gql from "graphql-tag";
 import uuidv4 from "uuid/v4";
 import Loading from "../../components/Loading";
@@ -26,9 +25,13 @@ const styles = theme => ({
   },
   formControl: {
     width: "100%"
+  },
+  inputLabel: {
+    color: "#9a9a9a"
   }
 });
 
+// Subscription for adding newly added brand to list
 const BRANDS_SUBSCRIPTION = gql`
   subscription onBrandAdded {
     brandAdded {
@@ -49,11 +52,13 @@ const query = gql`
 
 class BrandsList extends React.Component {
   state = {
-    name: "",
+    brandToSearch: "",
     loading: true,
-    brands: []
+    brands: [],
+    brandsToShow: []
   };
 
+  // Getting list of all brands and subscribing for newly created brands
   componentDidMount = async () => {
     const queryResult = await this.props.client.query({
       query,
@@ -61,17 +66,20 @@ class BrandsList extends React.Component {
     });
     this.setState({
       loading: queryResult.loading,
-      brands: queryResult.data.getAllBrands
+      brands: queryResult.data.getAllBrands,
+      brandsToShow: queryResult.data.getAllBrands
     });
     this._subscribe();
   };
 
+  // Unsubscribing on unmount
   componentWillUnmount = () => {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
   };
 
+  // Subscription and setting updated list of brands
   _subscribe = () => {
     this.subscription = this.props.client
       .subscribe({
@@ -84,44 +92,64 @@ class BrandsList extends React.Component {
       });
   };
 
+  _onBrandNameInput = e => {
+    const inputValue = e.target.value;
+    let filteredBrands = this.state.brands;
+    filteredBrands = filteredBrands.filter(brand => {
+      return brand.name.toLowerCase().search(inputValue.toLowerCase()) !== -1;
+    });
+    this.setState({ brandsToShow: filteredBrands, brandToSearch: inputValue });
+  };
+
   render() {
     const { classes } = this.props;
-    const { brands } = this.state;
-    const brandListItems = brands.map(brand => {
+    const { brandsToShow } = this.state;
+
+    // List items
+    const brandListItems = brandsToShow.map(brand => {
       return (
         <ListItem key={uuidv4()} button>
           <ListItemText primary={brand.name} />
         </ListItem>
       );
     });
+
     return (
       <div className={classes.listContainer}>
+        {/* If loading - render loader */}
         {this.state.loading ? (
           <Loading />
         ) : (
+          // Else - render list
           <List component="ul">
+            <TextField
+              label="Brand name"
+              value={this.state.brandToSearch}
+              margin="normal"
+              variant="outlined"
+              onChange={this._onBrandNameInput}
+              InputLabelProps={{
+                classes: {
+                  root: classes.inputLabel
+                }
+              }}
+              InputProps={{
+                classes: {
+                  root: classes.inputLabel
+                }
+              }}
+            />
             {brandListItems.length === 0 ? (
-              <FormControl
-                classes={{
-                  root: classes.formControl
-                }}
-                disabled
-              >
-                <InputLabel style={{ color: "white" }} disabled>
-                  There are no brands
-                </InputLabel>
-                <Input onChange={this._changeLogIn} type="text" />
-              </FormControl>
-            ) : (
-              <div>
-                <TextField
-                  label="Brand name"
-                  value={this.state.name}
-                  margin="normal"
-                  variant="outlined"
+              // If brands list is empty - render "There are no brands"
+              <ListItem>
+                <ListItemText
+                  style={{ color: "#9a9a9a" }}
+                  primary="There are no brands to display"
                 />
-                {brandListItems}
-              </div>
+              </ListItem>
+            ) : (
+              // Else - render full list of brands
+              <div>{brandListItems}</div>
             )}
           </List>
         )}
