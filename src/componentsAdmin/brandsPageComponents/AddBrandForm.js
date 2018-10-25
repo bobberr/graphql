@@ -21,6 +21,9 @@ const classes = theme => ({
   addBrandInput: {
     color: "white"
   },
+  button: {
+    color: "white"
+  },
   inputAfter: {
     "&:after": {
       borderBottomColor: "#2590EC"
@@ -110,10 +113,17 @@ class AddBrandForm extends React.Component {
               root: classes.button
             }}
             variant="outlined"
-            color="primary"
             type="submit"
           >
             Add brand
+          </Button>
+          <Button
+            variant="contained"
+            color="default"
+            className={classes.button}
+          >
+            Upload
+            {/* <CloudUploadIcon className={classes.rightIcon} /> */}
           </Button>
         </form>
       </div>

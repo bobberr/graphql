@@ -4,9 +4,6 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import { withStyles } from "@material-ui/core/styles";
 import TextField from "@material-ui/core/TextField";
-import InputLabel from "@material-ui/core/InputLabel";
-import Input from "@material-ui/core/Input";
-import FormControl from "@material-ui/core/FormControl";
 import PropTypes from "prop-types";
 import gql from "graphql-tag";
 import uuidv4 from "uuid/v4";
@@ -86,9 +83,19 @@ class BrandsList extends React.Component {
         query: BRANDS_SUBSCRIPTION
       })
       .subscribe(payload => {
-        this.setState(prevState => ({
-          brands: [...prevState.brands, payload.data.brandAdded]
-        }));
+        // If filtering input is empty - set updated brands list to both brandsLists
+        // If filter isn't empty - brandsToShow is the same because user filters list
+        // and we don't need to append new item to list
+        this.setState(prevState => {
+          const newBrandsList = [...prevState.brands, payload.data.brandAdded];
+          return {
+            brands: newBrandsList,
+            brandsToShow:
+              prevState.brandToSearch.length === 0
+                ? newBrandsList
+                : prevState.brandsToShow
+          };
+        });
       });
   };
 
@@ -98,7 +105,10 @@ class BrandsList extends React.Component {
     filteredBrands = filteredBrands.filter(brand => {
       return brand.name.toLowerCase().search(inputValue.toLowerCase()) !== -1;
     });
-    this.setState({ brandsToShow: filteredBrands, brandToSearch: inputValue });
+    this.setState({
+      brandsToShow: filteredBrands,
+      brandToSearch: inputValue
+    });
   };
 
   render() {

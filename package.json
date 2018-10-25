@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^3.2.2",
+    "antd": "^3.10.2",
     "apollo-client": "^2.2.8",
     "apollo-client-preset": "^1.0.8",
     "apollo-link": "^1.2.3",
