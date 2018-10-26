@@ -6,11 +6,15 @@ import { withStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import Typography from "@material-ui/core/Typography";
 import InputLabel from "@material-ui/core/InputLabel";
-import Input from "@material-ui/core/Input";
+// import Input from "@material-ui/core/Input";
 import FormControl from "@material-ui/core/FormControl";
 import PropTypes from "prop-types";
-import Button from "@material-ui/core/Button";
 import FormHelperText from "@material-ui/core/FormHelperText";
+
+import { Input, Form, Button } from "antd";
+import injectSheet from "react-jss";
+
+const FormItem = Form.Item;
 
 const logInAdminQuery = gql`
   query logInAdmin($login: String!, $password: String!) {
@@ -18,7 +22,7 @@ const logInAdminQuery = gql`
   }
 `;
 
-const styles = theme => ({
+const styles = {
   container: {
     height: "100vh",
     background: "#232431",
@@ -38,25 +42,25 @@ const styles = theme => ({
     textAlign: "center",
     margin: "30px"
   },
+  visibleError: {
+    opacity: 1
+  },
+  hiddenError: {
+    opacity: 0
+  },
+  error: {
+    color: "#CA52E4",
+    transition: "opacity .2s linear",
+    textAlign: "center"
+  },
   form: {
     display: "flex",
     flexDirection: "column",
     padding: "0px 100px"
   },
-  inputAfter: {
-    "&:after": {
-      borderBottomColor: "#2590EC"
-    }
-  },
-  inputLabel: {
-    color: "#9a9a9a",
-    "&$inputLabelFocused": {
-      color: "#9a9a9a"
-    }
-  },
-  inputLabelFocused: {},
   inputRoot: {
-    color: "#9a9a9a"
+    color: "white",
+    backgroundColor: "transparent"
   },
   formControl: {
     marginBottom: "10px"
@@ -76,41 +80,33 @@ const styles = theme => ({
     marginBottom: "10px",
     height: "70px"
   }
-});
+};
 
 class AdminLogin extends React.Component {
-  state = {
-    login: "",
-    password: ""
-  };
-
-  //	Inputing login to state
-  _changeLogIn = e => {
-    this.setState({ login: e.target.value });
-  };
-
-  // Inputing password to state
-  _changePassword = e => {
-    this.setState({ password: e.target.value });
-  };
+  state = {};
 
   // Runs mutation on submiting form
-  _submitLogIn = async e => {
+  _submitLogIn = e => {
     e.preventDefault();
-    const queryResult = await this.props.client.query({
-      query: logInAdminQuery,
-      variables: {
-        login: this.state.login,
-        password: this.state.password
+    this.props.form.validateFields(async (err, value) => {
+      if (!err) {
+        const queryResult = await this.props.client.query({
+          query: logInAdminQuery,
+          variables: {
+            login: value.login,
+            password: value.password
+          }
+        });
+        queryResult.data.adminLogIn
+          ? history.push("/admin-dashboard")
+          : this.setState({ logInError: true });
       }
     });
-    queryResult.data.adminLogIn
-      ? history.push("/admin-dashboard")
-      : this.setState({ logInError: true });
   };
 
   render() {
     const { classes } = this.props;
+    const { getFieldDecorator } = this.props.form;
 
     return (
       <div className={classes.container}>
@@ -118,73 +114,51 @@ class AdminLogin extends React.Component {
           <Typography className={classes.title} component="h2">
             Welcome, admin.
           </Typography>
-          <form onSubmit={this._submitLogIn} className={classes.form}>
-            <FormControl
-              classes={{
-                root: classes.formControl
-              }}
-              required={true}
-            >
-              <InputLabel
-                FormLabelClasses={{
-                  root: classes.inputLabel,
-                  focused: classes.inputLabelFocused
-                }}
-              >
-                Admin login
-              </InputLabel>
-              <Input
-                onChange={this._changeLogIn}
-                type="text"
-                classes={{
-                  root: classes.inputRoot,
-                  underline: classes.inputAfter
-                }}
-              />
-            </FormControl>
-            <FormControl
-              classes={{
-                root: classes.formControlWithHelperText
-              }}
-              required={true}
-            >
-              <InputLabel
-                FormLabelClasses={{
-                  root: classes.inputLabel,
-                  focused: classes.inputLabelFocused
-                }}
-              >
-                Admin password
-              </InputLabel>
-              <Input
-                onChange={this._changePassword}
-                type="password"
-                classes={{
-                  root: classes.inputRoot,
-                  underline: classes.inputAfter
-                }}
-              />
-              {this.state.logInError && (
-                <FormHelperText
-                  classes={{
-                    root: classes.helperText
-                  }}
-                >
-                  You probably entered wrong login or password
-                </FormHelperText>
+          <Form onSubmit={this._submitLogIn} className={classes.form}>
+            <FormItem>
+              {getFieldDecorator("login", {
+                rules: [
+                  {
+                    required: true,
+                    message: "Please input your login"
+                  }
+                ]
+              })(
+                <Input
+                  placeholder="Admin login"
+                  className={classes.inputRoot}
+                />
               )}
-            </FormControl>
-            <Button
-              classes={{
-                root: classes.button
-              }}
-              variant="outlined"
-              color="primary"
-              type="submit"
+            </FormItem>
+            <FormItem>
+              {getFieldDecorator("password", {
+                rules: [
+                  {
+                    required: true,
+                    message: "Please input your password"
+                  }
+                ]
+              })(
+                <Input
+                  placeholder="Admin password"
+                  className={classes.inputRoot}
+                />
+              )}
+            </FormItem>
+            <p
+              className={[
+                classes.error,
+                this.state.logInError
+                  ? classes.visibleError
+                  : classes.hiddenError
+              ].join(" ")}
             >
+              You entered wrong login or password
+            </p>
+            <Button type="primary" htmlType="submit">
               Send
             </Button>
-          </form>
+          </Form>
         </Card>
       </div>
     );
@@ -195,4 +169,4 @@ AdminLogin.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withApollo(withStyles(styles)(AdminLogin));
+export default withApollo(injectSheet(styles)(Form.create()(AdminLogin)));
