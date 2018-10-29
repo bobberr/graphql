@@ -2,15 +2,8 @@ import React from "react";
 import gql from "graphql-tag";
 import { history } from "../App";
 import { withApollo } from "react-apollo";
-import { withStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import Typography from "@material-ui/core/Typography";
-import InputLabel from "@material-ui/core/InputLabel";
-// import Input from "@material-ui/core/Input";
-import FormControl from "@material-ui/core/FormControl";
+import { Card } from "antd";
 import PropTypes from "prop-types";
-import FormHelperText from "@material-ui/core/FormHelperText";
-
 import { Input, Form, Button } from "antd";
 import injectSheet from "react-jss";
 
@@ -33,7 +26,8 @@ const styles = {
   card: {
     width: "500px",
     background: "#27293D",
-    border: "2px solid #1F8EF1"
+    border: "2px solid #1F8EF1",
+    borderRadius: "10px"
   },
   title: {
     color: "white",
@@ -51,7 +45,8 @@ const styles = {
   error: {
     color: "#CA52E4",
     transition: "opacity .2s linear",
-    textAlign: "center"
+    textAlign: "center",
+    marginBottom: "5px"
   },
   form: {
     display: "flex",
@@ -64,21 +59,6 @@ const styles = {
   },
   formControl: {
     marginBottom: "10px"
-  },
-  rightIcon: {
-    marginRight: "20px"
-  },
-  button: {
-    alignSelf: "center",
-    width: "160px",
-    margin: "20px 0"
-  },
-  helperText: {
-    color: "#CA52E4"
-  },
-  formControlWithHelperText: {
-    marginBottom: "10px",
-    height: "70px"
   }
 };
 
@@ -111,9 +91,7 @@ class AdminLogin extends React.Component {
     return (
       <div className={classes.container}>
         <Card className={classes.card}>
-          <Typography className={classes.title} component="h2">
-            Welcome, admin.
-          </Typography>
+          <h4 className={classes.title}>Welcome, admin.</h4>
           <Form onSubmit={this._submitLogIn} className={classes.form}>
             <FormItem>
               {getFieldDecorator("login", {
@@ -142,6 +120,7 @@ class AdminLogin extends React.Component {
                 <Input
                   placeholder="Admin password"
                   className={classes.inputRoot}
+                  type="password"
                 />
               )}
             </FormItem>
@@ -156,7 +135,7 @@ class AdminLogin extends React.Component {
               You entered wrong login or password
             </p>
             <Button type="primary" htmlType="submit">
-              Send
+              Log In
             </Button>
           </Form>
         </Card>

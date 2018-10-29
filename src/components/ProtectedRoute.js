@@ -2,7 +2,7 @@ import React from "react";
 import { Redirect } from "react-router-dom";
 import gql from "graphql-tag";
 import adminClient from "../apolloClients/admin-client";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import Loading from "./Loading";
 
 // query for just doing request to the server -
 // then server takes request and checks for userId inside session object
@@ -50,7 +50,7 @@ const ProtectedRoute = WrappedComponent => {
       }
       return (
         <div style={styles.containerStyles}>
-          <CircularProgress style={styles.circleStyles} size={150} />
+          <Loading size={160} />
         </div>
       );
     }

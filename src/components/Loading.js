@@ -1,21 +1,25 @@
 import React from "react";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import { Spin, Icon } from "antd";
 
-const styles = theme => ({
+const styles = {
   progressContainer: {
     height: "100%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center"
   }
-});
+};
 
-const Loading = ({ classes }) => {
+const Loading = ({ classes, size }) => {
+  const loadingIcon = (
+    <Icon type="loading" style={{ fontSize: size || 36 }} spin />
+  );
+
   return (
     <div className={classes.progressContainer}>
-      <CircularProgress />
+      <Spin indicator={loadingIcon} />
     </div>
   );
 };
@@ -24,4 +28,4 @@ Loading.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(Loading);
+export default injectSheet(styles)(Loading);
