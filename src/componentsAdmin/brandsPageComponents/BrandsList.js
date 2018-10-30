@@ -1,16 +1,13 @@
 import React from "react";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import { withStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
 import PropTypes from "prop-types";
 import gql from "graphql-tag";
 import uuidv4 from "uuid/v4";
 import Loading from "../../components/Loading";
 import { withApollo } from "react-apollo";
+import injectSheet from "react-jss";
+import { Menu, Input } from "antd";
 
-const styles = theme => ({
+const styles = {
   listContainer: {
     background: "#27293D",
     width: "220px",
@@ -26,7 +23,7 @@ const styles = theme => ({
   inputLabel: {
     color: "#9a9a9a"
   }
-});
+};
 
 // Subscription for adding newly added brand to list
 const BRANDS_SUBSCRIPTION = gql`
@@ -118,9 +115,9 @@ class BrandsList extends React.Component {
     // List items
     const brandListItems = brandsToShow.map(brand => {
       return (
-        <ListItem key={uuidv4()} button>
-          <ListItemText primary={brand.name} />
-        </ListItem>
+        <Menu.Item key={uuidv4()}>
+          <span>{brand.name}</span>
+        </Menu.Item>
       );
     });
 
@@ -131,37 +128,16 @@ class BrandsList extends React.Component {
           <Loading />
         ) : (
           // Else - render list
-          <List component="ul">
-            <TextField
-              label="Brand name"
-              value={this.state.brandToSearch}
-              margin="normal"
-              variant="outlined"
-              onChange={this._onBrandNameInput}
-              InputLabelProps={{
-                classes: {
-                  root: classes.inputLabel
-                }
-              }}
-              InputProps={{
-                classes: {
-                  root: classes.inputLabel
-                }
-              }}
-            />
+          <div>
+            <Input placeholder="Brand name" onChange={this._onBrandNameInput} />
+            {/* If brands list is empty - render "There are no brands" */}
             {brandListItems.length === 0 ? (
-              // If brands list is empty - render "There are no brands"
-              <ListItem>
-                <ListItemText
-                  style={{ color: "#9a9a9a" }}
-                  primary="There are no brands to display"
-                />
-              </ListItem>
+              <p>There are no brands to display</p>
             ) : (
               // Else - render full list of brands
-              <div>{brandListItems}</div>
+              <Menu component="ul">{brandListItems}</Menu>
             )}
-          </List>
+          </div>
         )}
       </div>
     );
@@ -172,4 +148,4 @@ BrandsList.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(withApollo(BrandsList));
+export default injectSheet(styles)(withApollo(BrandsList));

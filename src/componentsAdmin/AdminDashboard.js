@@ -32,7 +32,8 @@ const styles = {
     color: "white"
   },
   menu: {
-    width: "250px"
+    width: "250px",
+    paddingTop: "10px"
   },
   mainArea: {
     display: "flex",
@@ -54,7 +55,7 @@ const linksConfig = [
     icon: "area-chart"
   },
   {
-    name: "Brand page",
+    name: "Brands page",
     path: "/admin-dashboard/brands",
     icon: "car"
   },
