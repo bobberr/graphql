@@ -1,112 +1,108 @@
 import React from "react";
 import { withApollo } from "react-apollo";
 import ProtectedRoute from "../components/ProtectedRoute";
-import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 import { Route, Link } from "react-router-dom";
-import Drawer from "@material-ui/core/Drawer";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
 import BrandsPage from "./BrandsPage";
 import SeriesPage from "./SeriesPage";
+import injectSheet from "react-jss";
+import { Menu, Icon } from "antd";
 
-const styles = theme => ({
+const styles = {
   container: {
     background: "#232431",
     color: "white",
     height: "100vh",
-    flexGrow: 1,
-    zIndex: 1,
     overflow: "hidden",
     position: "relative",
-    display: "flex"
+    display: "flex",
+    flexDirection: "column"
   },
   appBar: {
     background: "#27293D",
-    position: "absolute",
-    zIndex: "10000"
+    height: "100px",
+    boxShadow: "0px 5px 5px 0px rgba(0,0,0,0.75)",
+    zIndex: 10000
   },
-  drawerPaper: {
-    width: "200px",
-    position: "relative",
-    background: "#1F8EF1"
+  appTitle: {
+    fontSize: "26px",
+    height: "36px",
+    lineHeight: "36px",
+    margin: "30px",
+    color: "white"
   },
-  toolbar: theme.mixins.toolbar,
-  link: {
-    color: "white",
-    display: "block",
-    textDecoration: "none",
-    padding: "11px 24px",
-    width: "100%"
+  menu: {
+    width: "250px"
   },
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing.unit * 3,
-    minWidth: 0,
-    backgroundColor: "#232431"
+  mainArea: {
+    display: "flex",
+    alignItems: "flex-start"
   },
-  listItem: {
-    padding: 0
+  menuLink: {
+    fontSize: "18px"
+  },
+  menuItem: {
+    display: "flex",
+    alignItems: "center"
   }
-});
+};
 
 const linksConfig = [
   {
     name: "Home",
-    path: "/admin-dashboard"
+    path: "/admin-dashboard",
+    icon: "area-chart"
   },
   {
     name: "Brand page",
-    path: "/admin-dashboard/brands"
+    path: "/admin-dashboard/brands",
+    icon: "car"
   },
   {
     name: "Series page",
-    path: "/admin-dashboard/series"
+    path: "/admin-dashboard/series",
+    icon: "copy"
   }
 ];
 
 class AdminDashboard extends React.Component {
   render() {
     const { classes } = this.props;
-    const links = linksConfig.map((link, i) => (
-      <ListItem
-        key={i}
-        divider
-        classes={{ root: classes.listItem }}
-        button={true}
-      >
-        <Link className={classes.link} to={link.path}>
+    const links = linksConfig.map(link => (
+      <Menu.Item className={classes.menuItem} key={link.path}>
+        {link.icon ? (
+          <Icon
+            style={{ fontSize: "18px" }}
+            className={classes.menuIcon}
+            type={link.icon}
+          />
+        ) : null}
+        <Link className={classes.menuLink} to={link.path}>
           {link.name}
         </Link>
-      </ListItem>
+      </Menu.Item>
     ));
 
     return (
       <div className={classes.container}>
-        <AppBar className={classes.appBar}>
-          <Toolbar>
-            <Typography variant="h6" color="inherit" noWrap>
-              Tuning cars project logo
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Drawer
-          variant="permanent"
-          classes={{
-            paper: classes.drawerPaper
-          }}
-        >
-          <div className={classes.toolbar} />
-          <List>{links}</List>
-        </Drawer>
-        <main className={classes.content}>
-          <div className={classes.toolbar} />
-          <Route path="/admin-dashboard/brands" component={BrandsPage} />
-          <Route path="/admin-dashboard/series" component={SeriesPage} />
-        </main>
+        <div className={classes.appBar}>
+          <h3 className={classes.appTitle}>Tuning cars project logo</h3>
+        </div>
+        <div className={classes.mainArea}>
+          <Menu
+            defaultSelectedKeys={[`${document.location.pathname}`]}
+            mode="inline"
+            theme="dark"
+            className={classes.menu}
+          >
+            {links}
+          </Menu>
+          <main className={classes.content}>
+            <div className={classes.toolbar} />
+            <Route path="/admin-dashboard/brands" component={BrandsPage} />
+            <Route path="/admin-dashboard/series" component={SeriesPage} />
+          </main>
+        </div>
       </div>
     );
   }
@@ -116,4 +112,4 @@ AdminDashboard.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default ProtectedRoute(withApollo(withStyles(styles)(AdminDashboard)));
+export default ProtectedRoute(withApollo(injectSheet(styles)(AdminDashboard)));
