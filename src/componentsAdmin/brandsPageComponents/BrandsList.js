@@ -10,18 +10,18 @@ import { Menu, Input } from "antd";
 const styles = {
   listContainer: {
     background: "#27293D",
-    width: "220px",
-    padding: "0 30px",
+    width: "250px",
+    padding: "20px 30px",
     marginRight: "50px"
   },
-  listItemText: {
-    color: "#9a9a9a"
+  input: {
+    background: "transparent",
+    color: "white",
+    borderRadius: "5px 5px 0 0"
   },
-  formControl: {
-    width: "100%"
-  },
-  inputLabel: {
-    color: "#9a9a9a"
+  hint: {
+    fontSize: "14px",
+    marginTop: "30px"
   }
 };
 
@@ -129,13 +129,19 @@ class BrandsList extends React.Component {
         ) : (
           // Else - render list
           <div>
-            <Input placeholder="Brand name" onChange={this._onBrandNameInput} />
+            <Input
+              className={classes.input}
+              placeholder="Brand name"
+              onChange={this._onBrandNameInput}
+            />
             {/* If brands list is empty - render "There are no brands" */}
             {brandListItems.length === 0 ? (
-              <p>There are no brands to display</p>
+              <p className={classes.hint}>There are no brands to display</p>
             ) : (
               // Else - render full list of brands
-              <Menu component="ul">{brandListItems}</Menu>
+              <Menu component="ul" theme="dark">
+                {brandListItems}
+              </Menu>
             )}
           </div>
         )}

@@ -7,13 +7,20 @@ import { defaults, resolvers } from "../clientResolver/clientResolver";
 import { split } from "apollo-link";
 import { WebSocketLink } from "apollo-link-ws";
 import { getMainDefinition } from "apollo-utilities";
+import { createUploadLink } from "apollo-upload-client";
 
 const cache = new InMemoryCache();
+const uri = "http://localhost:3001/graphql";
+
 const stateLink = withClientState({ resolvers, cache, defaults });
+
+const uploadLink = createUploadLink({ uri });
+
 const httpLinkWithState = ApolloLink.from([
   stateLink,
+  uploadLink,
   new HttpLink({
-    uri: "http://localhost:3001/graphql",
+    uri,
     credentials: "include"
   })
 ]);

@@ -11,6 +11,7 @@
     "apollo-link-state": "^0.4.2",
     "apollo-link-ws": "^1.0.9",
     "apollo-server-express": "^2.1.0",
+    "apollo-upload-client": "^9.0.0",
     "apollo-utilities": "^1.0.21",
     "body-parser": "^1.18.2",
     "connect-mongo": "^2.0.1",
