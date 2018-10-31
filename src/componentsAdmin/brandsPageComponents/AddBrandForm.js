@@ -1,15 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import Typography from "@material-ui/core/Typography";
-import InputLabel from "@material-ui/core/InputLabel";
-import Input from "@material-ui/core/Input";
-import FormControl from "@material-ui/core/FormControl";
-import Button from "@material-ui/core/Button";
 import { withApollo } from "react-apollo";
 import gql from "graphql-tag";
+import injectSheet from "react-jss";
+import { Input, Form, Button } from "antd";
 
-const classes = theme => ({
+const FormItem = Form.Item;
+
+const classes = {
   addBrandContainer: {
     background: "#27293D",
     padding: "20px"
@@ -39,7 +37,7 @@ const classes = theme => ({
   inputRoot: {
     color: "#9a9a9a"
   }
-});
+};
 
 const addBrandMutation = gql`
   mutation AddBrandFormMutation($name: String!) {
@@ -51,81 +49,54 @@ const addBrandMutation = gql`
 
 class AddBrandForm extends React.Component {
   state = {
-    brandName: ""
+    loading: false
   };
 
+  // When form is being submitted - validate input fields and if success, do mutation -> clear input value
   _submitAddBrand = e => {
     e.preventDefault();
-    this.props.client.mutate({
-      mutation: addBrandMutation,
-      variables: {
-        name: this.state.brandName
+    this.props.form.validateFields(async (err, values) => {
+      if (!err) {
+        this.setState({ loading: true });
+        await this.props.client.mutate({
+          mutation: addBrandMutation,
+          variables: {
+            name: values.brandName
+          }
+        });
+        this.props.form.setFieldsValue({
+          brandName: ""
+        });
+        this.setState({ loading: false });
       }
-    });
-  };
-
-  _changeBrandName = e => {
-    this.setState({
-      brandName: e.target.value
     });
   };
 
   render() {
     const { classes } = this.props;
+    const { getFieldDecorator } = this.props.form;
     return (
       <div className={classes.addBrandContainer}>
-        <Typography
-          component="h3"
-          variant="h5"
-          classes={{
-            h5: classes.addBrandTitle
-          }}
-        >
-          Add brand
-        </Typography>
-        <form onSubmit={this._submitAddBrand}>
-          <FormControl
-            classes={{
-              root: classes.formControl
-            }}
-            required={true}
-          >
-            <InputLabel
-              FormLabelClasses={{
-                root: classes.inputLabel,
-                focused: classes.inputLabelFocused
-              }}
-            >
-              Brand name
-            </InputLabel>
-            <Input
-              onChange={this._changeBrandName}
-              type="text"
-              value={this.state.brandName}
-              classes={{
-                root: classes.inputRoot,
-                underline: classes.inputAfter
-              }}
-            />
-          </FormControl>
-          <Button
-            classes={{
-              root: classes.button
-            }}
-            variant="outlined"
-            type="submit"
-          >
-            Add brand
+        <h3 className={classes.addBrandTitle}>Add brand</h3>
+        <Form onSubmit={this._submitAddBrand}>
+          <FormItem>
+            {/* Validating input fields */}
+            {getFieldDecorator("brandName", {
+              rules: [
+                {
+                  required: true,
+                  message: "Please input brand name"
+                }
+              ]
+            })(
+              <Input placeholder="Brand name" className={classes.inputRoot} />
+            )}
+          </FormItem>
+          {/* If loading - render loading circle and text */}
+          <Button type="primary" htmlType="submit" loading={this.state.loading}>
+            {this.state.loading ? "Loading" : "Create"}
           </Button>
-          <Button
-            variant="contained"
-            color="default"
-            className={classes.button}
-          >
-            Upload
-            {/* <CloudUploadIcon className={classes.rightIcon} /> */}
-          </Button>
-        </form>
+        </Form>
       </div>
     );
   }
@@ -135,4 +106,5 @@ AddBrandForm.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(classes)(withApollo(AddBrandForm));
+// Initializing antd Form, injecting styles and consuming apollo client
+export default withApollo(injectSheet(classes)(Form.create()(AddBrandForm)));

@@ -1,5 +1,4 @@
 import { ApolloClient } from "apollo-client";
-import { HttpLink } from "apollo-link-http";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloLink } from "apollo-link";
 import { withClientState } from "apollo-link-state";
@@ -14,16 +13,9 @@ const uri = "http://localhost:3001/graphql";
 
 const stateLink = withClientState({ resolvers, cache, defaults });
 
-const uploadLink = createUploadLink({ uri });
+const uploadLink = createUploadLink({ uri, credentials: "include" });
 
-const httpLinkWithState = ApolloLink.from([
-  stateLink,
-  uploadLink,
-  new HttpLink({
-    uri,
-    credentials: "include"
-  })
-]);
+const httpUploadStateLink = ApolloLink.from([stateLink, uploadLink]);
 const wsLink = new WebSocketLink({
   uri: "ws://localhost:3001/graphql",
   options: {
@@ -36,7 +28,7 @@ const link = split(
     return kind === "OperationDefinition" && operation === "subscription";
   },
   wsLink,
-  httpLinkWithState
+  httpUploadStateLink
 );
 
 const adminClient = new ApolloClient({

@@ -6,7 +6,13 @@ var subscriptionEvents = require("./subscriptionEvents");
 var pubSub = new PubSub();
 
 module.exports.adminTypeDefs = adminTypeDefs = `
-  type Query {
+  type File {
+    filename: String!
+    mimetype: String!
+    encoding: String!
+  }
+
+  type Query { 
     adminLogIn(login: String!, password: String!): Boolean
     checkAuth: Boolean
     getAllBrands: [Brand]

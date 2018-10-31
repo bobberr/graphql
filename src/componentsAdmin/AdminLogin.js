@@ -68,13 +68,13 @@ class AdminLogin extends React.Component {
   // Runs mutation on submiting form
   _submitLogIn = e => {
     e.preventDefault();
-    this.props.form.validateFields(async (err, value) => {
+    this.props.form.validateFields(async (err, values) => {
       if (!err) {
         const queryResult = await this.props.client.query({
           query: logInAdminQuery,
           variables: {
-            login: value.login,
-            password: value.password
+            login: values.login,
+            password: values.password
           }
         });
         queryResult.data.adminLogIn
@@ -148,4 +148,5 @@ AdminLogin.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
+// Initializing antd Form, injecting styles and consuming apollo client
 export default withApollo(injectSheet(styles)(Form.create()(AdminLogin)));
