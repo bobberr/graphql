@@ -1,7 +1,8 @@
-var uudiv4 = require("uuid/v4");
+var uuidv4 = require("uuid/v4");
 var BrandModel = require("../models/BrandModel");
 var { PubSub } = require("apollo-server-express");
 var subscriptionEvents = require("./subscriptionEvents");
+var fs = require("fs");
 
 var pubSub = new PubSub();
 
@@ -19,7 +20,7 @@ module.exports.adminTypeDefs = adminTypeDefs = `
   }
 
   type Mutation {
-    addBrand(name: String!): Brand
+    addBrand(name: String!, file: Upload!): Brand
   }
 
   type Subscription {
@@ -43,7 +44,7 @@ module.exports.rootAdmin = rootAdmin = {
     },
     adminLogIn: (obj, arg, { session }) => {
       if (arg.login === "admin" && arg.password === "admin") {
-        session.userId = uudiv4();
+        session.userId = uuidv4();
         return true;
       } else {
         return false;
@@ -54,7 +55,10 @@ module.exports.rootAdmin = rootAdmin = {
     }
   },
   Mutation: {
-    addBrand: async (obj, { name }, req) => {
+    addBrand: async (obj, { name, file }, req) => {
+      console.log(req);
+      const fileToWrite = fs.createWriteStream("./name.jpeg");
+
       const newBrand = new BrandModel({ name });
       try {
         await newBrand.save();

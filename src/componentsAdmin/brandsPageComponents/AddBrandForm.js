@@ -4,6 +4,7 @@ import { withApollo } from "react-apollo";
 import gql from "graphql-tag";
 import injectSheet from "react-jss";
 import { Input, Form, Button } from "antd";
+import UploadBrandButton from "./UploadBrandButton";
 
 const FormItem = Form.Item;
 
@@ -40,8 +41,8 @@ const classes = {
 };
 
 const addBrandMutation = gql`
-  mutation AddBrandFormMutation($name: String!) {
-    addBrand(name: $name) {
+  mutation AddBrandFormMutation($name: String!, $file: Upload!) {
+    addBrand(name: $name, file: $file) {
       name
     }
   }
@@ -49,7 +50,8 @@ const addBrandMutation = gql`
 
 class AddBrandForm extends React.Component {
   state = {
-    loading: false
+    loading: false,
+    logoFile: null
   };
 
   // When form is being submitted - validate input fields and if success, do mutation -> clear input value
@@ -61,7 +63,8 @@ class AddBrandForm extends React.Component {
         await this.props.client.mutate({
           mutation: addBrandMutation,
           variables: {
-            name: values.brandName
+            name: values.brandName,
+            file: this.state.logoFile
           }
         });
         this.props.form.setFieldsValue({
@@ -70,6 +73,10 @@ class AddBrandForm extends React.Component {
         this.setState({ loading: false });
       }
     });
+  };
+
+  setLogoFile = logoFile => {
+    this.setState({ logoFile });
   };
 
   render() {
@@ -91,6 +98,7 @@ class AddBrandForm extends React.Component {
             })(
               <Input placeholder="Brand name" className={classes.inputRoot} />
             )}
+            <UploadBrandButton onLogoUpload={this.setLogoFile} />
           </FormItem>
           {/* If loading - render loading circle and text */}
           <Button type="primary" htmlType="submit" loading={this.state.loading}>
