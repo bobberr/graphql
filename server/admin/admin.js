@@ -56,7 +56,7 @@ module.exports.rootAdmin = rootAdmin = {
   },
   Mutation: {
     addBrand: async (obj, { name, file }, req) => {
-      console.log(req);
+      console.log(file);
       const fileToWrite = fs.createWriteStream("./name.jpeg");
 
       const newBrand = new BrandModel({ name });

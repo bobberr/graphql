@@ -1,17 +1,17 @@
 import React from "react";
-import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import BrandsList from "./brandsPageComponents/BrandsList";
 import AddBrandForm from "./brandsPageComponents/AddBrandForm";
+import injectSheet from "react-jss";
 
-const styles = theme => ({
+const styles = {
   container: {
     height: "100%"
   },
   mainArea: {
     display: "flex"
   }
-});
+};
 
 class BrandsPage extends React.Component {
   render() {
@@ -31,4 +31,4 @@ BrandsPage.propTypes = {
   classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(BrandsPage);
+export default injectSheet(styles)(BrandsPage);

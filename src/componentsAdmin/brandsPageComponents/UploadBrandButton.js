@@ -15,6 +15,7 @@ class UploadBrandButton extends React.Component {
 
   handleChange = ({ fileList }) => {
     this.setState({ fileList });
+    console.log(fileList);
     this.props.onLogoUpload(fileList[0]);
   };
 
