@@ -12,7 +12,7 @@
     "apollo-server-express": "^2.1.0",
     "apollo-upload-client": "^9.0.0",
     "apollo-utilities": "^1.0.21",
-    "body-parser": "^1.18.2",
+    "body-parser": "^1.18.3",
     "connect-mongo": "^2.0.1",
     "cors": "^2.8.4",
     "express": "^4.16.3",

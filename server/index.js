@@ -1,21 +1,20 @@
-var express = require("express");
-var port = process.env.PORT || 3001;
-var mongoose = require("mongoose");
-var adminTypeDefs = require("./admin/admin").adminTypeDefs;
-var rootAdmin = require("./admin/admin").rootAdmin;
-var session = require("express-session");
-// var bodyParser = require("body-parser");
-var secretObject = require("./admin/secrets");
-var { ApolloServer } = require("apollo-server-express");
-var MongoStore = require("connect-mongo")(session);
-var http = require("http");
+const express = require("express");
+const port = process.env.PORT || 3001;
+const mongoose = require("mongoose");
+const adminTypeDefs = require("./admin/admin").adminTypeDefs;
+const rootAdmin = require("./admin/admin").rootAdmin;
+const session = require("express-session");
+const secretObject = require("./admin/secrets");
+const { ApolloServer } = require("apollo-server-express");
+const MongoStore = require("connect-mongo")(session);
+const http = require("http");
 
 mongoose.connect(
   secretObject.dbconnection,
   { useNewUrlParser: true }
 );
 
-var app = express();
+const app = express();
 
 app.use(
   session({
@@ -30,7 +29,7 @@ app.use(
   })
 );
 
-var apolloServer = new ApolloServer({
+const apolloServer = new ApolloServer({
   typeDefs: adminTypeDefs,
   resolvers: rootAdmin,
   context: ({ req }) => req
@@ -45,7 +44,7 @@ apolloServer.applyMiddleware({
   }
 });
 
-var httpServer = http.createServer(app);
+const httpServer = http.createServer(app);
 
 apolloServer.installSubscriptionHandlers(httpServer);
 

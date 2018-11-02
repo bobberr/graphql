@@ -13,20 +13,19 @@ class UploadBrandButton extends React.Component {
     fileList: []
   };
 
-  handleChange = ({ fileList }) => {
+  _handleChange = ({ fileList }) => {
     this.setState({ fileList });
-    console.log(fileList);
     this.props.onLogoUpload(fileList[0]);
   };
 
-  handlePreview = file => {
+  _handlePreview = file => {
     this.setState({
       previewImage: file.url || file.thumbUrl,
       previewVisible: true
     });
   };
 
-  handleCancel = () => this.setState({ previewVisible: false });
+  _handleCancel = () => this.setState({ previewVisible: false });
 
   render() {
     const { previewVisible, previewImage, fileList } = this.state;
@@ -42,15 +41,15 @@ class UploadBrandButton extends React.Component {
           action="//jsonplaceholder.typicode.com/posts/"
           listType="picture-card"
           fileList={fileList}
-          onPreview={this.handlePreview}
-          onChange={this.handleChange}
+          onPreview={this._handlePreview}
+          onChange={this._handleChange}
         >
           {fileList.length >= 1 ? null : uploadButton}
         </Upload>
         <Modal
           visible={previewVisible}
           footer={null}
-          onCancel={this.handleCancel}
+          onCancel={this._handleCancel}
           style={{ marginTop: "100px" }}
         >
           <img alt="example" style={{ width: "100%" }} src={previewImage} />

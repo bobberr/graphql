@@ -1,10 +1,10 @@
-var uuidv4 = require("uuid/v4");
-var BrandModel = require("../models/BrandModel");
-var { PubSub } = require("apollo-server-express");
-var subscriptionEvents = require("./subscriptionEvents");
-var fs = require("fs");
+const uuidv4 = require("uuid/v4");
+const BrandModel = require("../models/BrandModel");
+const { PubSub } = require("apollo-server-express");
+const subscriptionEvents = require("./subscriptionEvents");
+const fs = require("fs");
 
-var pubSub = new PubSub();
+const pubSub = new PubSub();
 
 module.exports.adminTypeDefs = adminTypeDefs = `
   type File {
@@ -56,9 +56,20 @@ module.exports.rootAdmin = rootAdmin = {
   },
   Mutation: {
     addBrand: async (obj, { name, file }, req) => {
-      console.log(file);
-      const fileToWrite = fs.createWriteStream("./name.jpeg");
+      // Awaiting readable stream and filename from request
+      const { stream, filename } = await file.originFileObj;
 
+      // RegExp for extracting extension from filename
+      const extensionRegExp = /(?:\.([^.]+))?$/;
+      const extension = extensionRegExp.exec(filename)[1];
+
+      // Write to file from stream
+      const fileToWrite = fs.createWriteStream(
+        `../img/brandsLogos/${name}.${extension}`
+      );
+      stream.pipe(fileToWrite);
+
+      // Creating new brand
       const newBrand = new BrandModel({ name });
       try {
         await newBrand.save();

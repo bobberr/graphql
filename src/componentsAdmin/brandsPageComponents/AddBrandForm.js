@@ -99,6 +99,12 @@ class AddBrandForm extends React.Component {
               <Input placeholder="Brand name" className={classes.inputRoot} />
             )}
             <UploadBrandButton onLogoUpload={this.setLogoFile} />
+            <input
+              type="file"
+              onChange={({ target }) => {
+                console.log(target.files);
+              }}
+            />
           </FormItem>
           {/* If loading - render loading circle and text */}
           <Button type="primary" htmlType="submit" loading={this.state.loading}>
