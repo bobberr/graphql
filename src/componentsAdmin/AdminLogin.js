@@ -77,8 +77,14 @@ class AdminLogin extends React.Component {
             password: values.password
           }
         });
+        // If redirectUrl is being passed - after successfull login
+        // - redirect him to page he had tried to access, else - redirect to admin-dashboard
         queryResult.data.adminLogIn
-          ? history.push("/admin-dashboard")
+          ? history.push(
+              this.props.location.state
+                ? this.props.location.state.redirectUrl
+                : "/admin-dashboard"
+            )
           : this.setState({ logInError: true });
       }
     });

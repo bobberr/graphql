@@ -46,7 +46,14 @@ const ProtectedRoute = WrappedComponent => {
         if (this.state.isAuth) {
           return <WrappedComponent />;
         }
-        return <Redirect to="/unauthorized" />;
+        return (
+          <Redirect
+            to={{
+              pathname: "/unauthorized",
+              state: { redirectUrl: this.props.location }
+            }}
+          />
+        );
       }
       return (
         <div style={styles.containerStyles}>
