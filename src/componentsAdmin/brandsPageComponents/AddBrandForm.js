@@ -51,32 +51,33 @@ const addBrandMutation = gql`
 class AddBrandForm extends React.Component {
   state = {
     loading: false,
-    logoFile: null
+    fileList: []
   };
 
   // When form is being submitted - validate input fields and if success, do mutation -> clear input value
   _submitAddBrand = e => {
     e.preventDefault();
-    this.props.form.validateFields(async (err, values) => {
+    this.props.form.validateFields((err, values) => {
       if (!err) {
-        this.setState({ loading: true });
-        await this.props.client.mutate({
-          mutation: addBrandMutation,
-          variables: {
-            name: values.brandName,
-            file: this.state.logoFile
-          }
+        this.setState({ loading: true }, async () => {
+          await this.props.client.mutate({
+            mutation: addBrandMutation,
+            variables: {
+              name: values.brandName,
+              file: this.state.fileList[0]
+            }
+          });
+          this.props.form.setFieldsValue({
+            brandName: ""
+          });
+          this.setState({ loading: false });
         });
-        this.props.form.setFieldsValue({
-          brandName: ""
-        });
-        this.setState({ loading: false });
       }
     });
   };
 
-  setLogoFile = logoFile => {
-    this.setState({ logoFile });
+  setLogoFile = fileList => {
+    this.setState({ fileList });
   };
 
   render() {
@@ -98,12 +99,9 @@ class AddBrandForm extends React.Component {
             })(
               <Input placeholder="Brand name" className={classes.inputRoot} />
             )}
-            <UploadBrandButton onLogoUpload={this.setLogoFile} />
-            <input
-              type="file"
-              onChange={({ target }) => {
-                console.log(target.files);
-              }}
+            <UploadBrandButton
+              fileList={this.state.fileList}
+              onLogoUpload={this.setLogoFile}
             />
           </FormItem>
           {/* If loading - render loading circle and text */}

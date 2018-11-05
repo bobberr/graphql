@@ -9,13 +9,11 @@ const classes = {
 class UploadBrandButton extends React.Component {
   state = {
     previewVisible: false,
-    previewImage: "",
-    fileList: []
+    previewImage: ""
   };
 
   _handleChange = ({ fileList }) => {
-    this.setState({ fileList });
-    this.props.onLogoUpload(fileList[0]);
+    this.props.onLogoUpload(fileList);
   };
 
   _handlePreview = file => {
@@ -28,7 +26,8 @@ class UploadBrandButton extends React.Component {
   _handleCancel = () => this.setState({ previewVisible: false });
 
   render() {
-    const { previewVisible, previewImage, fileList } = this.state;
+    const { previewVisible, previewImage } = this.state;
+    const { fileList } = this.props;
     const uploadButton = (
       <div>
         <Icon type="plus" />
