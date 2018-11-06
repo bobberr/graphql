@@ -63,7 +63,9 @@ const styles = {
 };
 
 class AdminLogin extends React.Component {
-  state = {};
+  state = {
+    logInError: false
+  };
 
   // Runs mutation on submiting form
   _submitLogIn = e => {
@@ -131,12 +133,13 @@ class AdminLogin extends React.Component {
               )}
             </FormItem>
             <p
-              className={[
-                classes.error,
-                this.state.logInError
+              className={
+                classes.error +
+                " " +
+                (this.state.logInError
                   ? classes.visibleError
-                  : classes.hiddenError
-              ].join(" ")}
+                  : classes.hiddenError)
+              }
             >
               You entered wrong login or password
             </p>

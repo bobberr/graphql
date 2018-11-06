@@ -42,6 +42,7 @@ class UploadBrandButton extends React.Component {
           fileList={fileList}
           onPreview={this._handlePreview}
           onChange={this._handleChange}
+          accept=".jpeg,.jpg"
         >
           {fileList.length >= 1 ? null : uploadButton}
         </Upload>

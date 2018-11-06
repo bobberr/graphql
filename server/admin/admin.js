@@ -63,7 +63,7 @@ module.exports.rootAdmin = rootAdmin = {
       const extensionRegExp = /(?:\.([^.]+))?$/;
       const extension = extensionRegExp.exec(filename)[1];
 
-      // Write to file from stream
+      // Write to file from stream, relative path according to index.js server file
       const fileToWrite = fs.createWriteStream(
         `../img/brandsLogos/${name}.${extension}`
       );
