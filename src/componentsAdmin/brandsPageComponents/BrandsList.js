@@ -30,7 +30,7 @@ const BRANDS_SUBSCRIPTION = gql`
   subscription onBrandAdded {
     brandAdded {
       _id
-      name
+      brandName
     }
   }
 `;
@@ -39,7 +39,7 @@ const query = gql`
   query getAllBrands {
     getAllBrands {
       _id
-      name
+      brandName
     }
   }
 `;
@@ -116,7 +116,7 @@ class BrandsList extends React.Component {
     const brandListItems = brandsToShow.map(brand => {
       return (
         <Menu.Item key={uuidv4()}>
-          <span>{brand.name}</span>
+          <span>{brand.brandName}</span>
         </Menu.Item>
       );
     });

@@ -2,8 +2,20 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const brandSchema = new Schema({
-  name: {
+  brandName: {
     type: String,
+    required: true
+  },
+  brandCountry: {
+    type: String,
+    required: true
+  },
+  startYear: {
+    type: Number,
+    required: true
+  },
+  endYear: {
+    type: Number,
     required: true
   }
 });

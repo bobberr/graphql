@@ -37,7 +37,8 @@ const classes = {
   },
   inputLabelFocused: {},
   inputRoot: {
-    color: "#9a9a9a"
+    color: "#9a9a9a",
+    background: "transparent"
   },
   error: {
     color: "red",
@@ -53,14 +54,30 @@ const classes = {
 };
 
 const addBrandMutation = gql`
-  mutation AddBrandFormMutation($name: String!, $file: Upload!) {
-    addBrand(name: $name, file: $file) {
-      name
+  mutation AddBrandFormMutation(
+    $brandName: String!
+    $file: Upload!
+    $brandCountry: String!
+    $startYear: Int!
+    $endYear: Int!
+  ) {
+    addBrand(
+      brandName: $brandName
+      file: $file
+      brandCountry: $brandCountry
+      startYear: $startYear
+      endYear: $endYear
+    ) {
+      brandName
     }
   }
 `;
 
 class AddBrandForm extends React.Component {
+  // loading - for rendering spiner in button during creation of the brand
+  // fileList - list of brand logos
+  // imageError - flag for required validation of logo
+  // countriesToShow - filtered list of countries for autocomplete to show
   state = {
     loading: false,
     fileList: [],
@@ -68,30 +85,41 @@ class AddBrandForm extends React.Component {
     countriesToShow: []
   };
 
+  // Set all countries for showing in autocomplete
   componentDidMount() {
     this.setState({ countriesToShow: listOfCountries });
   }
 
   // When form is being submitted - validate input fields and if success, do mutation -> clear input value
+  // -> clear fileList for empty image area
   _submitAddBrand = e => {
     e.preventDefault();
 
     this.props.form.validateFields((err, values) => {
+      // If there is no image for brand - set required flag
       if (this.state.fileList.length <= 0) {
         this.setState({ imageError: true });
         return;
       }
       if (!err) {
+        const { brandName, brandCountry, startYear, endYear } = values;
         this.setState({ loading: true }, async () => {
           await this.props.client.mutate({
             mutation: addBrandMutation,
             variables: {
-              name: values.brandName,
-              file: this.state.fileList[0]
+              brandName,
+              file: this.state.fileList[0],
+              brandCountry,
+              startYear,
+              endYear
             }
           });
+          // Clear input values
           this.props.form.setFieldsValue({
-            brandName: ""
+            brandName: "",
+            brandCountry: "",
+            startYear: "",
+            endYear: ""
           });
           // Finish loading, set image list to empty array so there is no image after submiting form for preview
           this.setState({
@@ -103,15 +131,38 @@ class AddBrandForm extends React.Component {
     });
   };
 
+  // Method is passed to UploadBrandButton for seting fileList
+  // to parent component for appropriate work of clearing fileList after submitting form
   setLogoFile = fileList => {
     this.setState({ fileList, imageError: false });
   };
 
+  // Filtering among the countries
   _onSearchCountry = value => {
     const filteredCountries = listOfCountries.filter(country => {
       return country.toLowerCase().search(value.toLowerCase()) !== -1;
     });
     this.setState({ countriesToShow: filteredCountries });
+  };
+
+  // Validation of the start year of the brand - if it's further than end date -> set message
+  _validateStartYear = (rule, value, callback) => {
+    const { form } = this.props;
+    if (Number(value) > Number(form.getFieldValue("endYear"))) {
+      callback("Start year is incorrect");
+    } else {
+      callback();
+    }
+  };
+
+  // Validation of the end year of the brand - if it's earlier than start data -> set message
+  _validateEndYear = (rule, value, callback) => {
+    const { form } = this.props;
+    if (Number(value) < Number(form.getFieldValue("startYear"))) {
+      callback("End year is incorrect");
+    } else {
+      callback();
+    }
   };
 
   render() {
@@ -147,6 +198,45 @@ class AddBrandForm extends React.Component {
                 placeholder="Input country of origin"
                 dataSource={this.state.countriesToShow}
                 onSearch={this._onSearchCountry}
+                className={classes.inputRoot}
+              />
+            )}
+          </FormItem>
+          <FormItem>
+            {getFieldDecorator("startYear", {
+              rules: [
+                {
+                  required: true,
+                  message: "Please input start year"
+                },
+                {
+                  validator: this._validateStartYear
+                }
+              ]
+            })(
+              <Input
+                placeholder="Start year"
+                type="number"
+                className={classes.inputRoot}
+              />
+            )}
+          </FormItem>
+          <FormItem>
+            {getFieldDecorator("endYear", {
+              rules: [
+                {
+                  required: true,
+                  message: "Please input end year"
+                },
+                {
+                  validator: this._validateEndYear
+                }
+              ]
+            })(
+              <Input
+                placeholder="End year"
+                type="number"
+                className={classes.inputRoot}
               />
             )}
           </FormItem>

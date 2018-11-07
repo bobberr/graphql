@@ -20,7 +20,13 @@ module.exports.adminTypeDefs = adminTypeDefs = `
   }
 
   type Mutation {
-    addBrand(name: String!, file: Upload!): Brand
+    addBrand(
+      brandName: String!, 
+      file: Upload!, 
+      brandCountry: String!
+      startYear: Int!
+      endYear: Int!
+    ): Brand
   }
 
   type Subscription {
@@ -29,7 +35,7 @@ module.exports.adminTypeDefs = adminTypeDefs = `
 
   type Brand {
     _id: ID
-    name: String
+    brandName: String
   }
   
   type Test {
@@ -55,7 +61,11 @@ module.exports.rootAdmin = rootAdmin = {
     }
   },
   Mutation: {
-    addBrand: async (obj, { name, file }, req) => {
+    addBrand: async (
+      obj,
+      { brandName, file, brandCountry, startYear, endYear },
+      req
+    ) => {
       // Awaiting readable stream and filename from request
       const { stream, filename } = await file.originFileObj;
 
@@ -65,12 +75,17 @@ module.exports.rootAdmin = rootAdmin = {
 
       // Write to file from stream, relative path according to index.js server file
       const fileToWrite = fs.createWriteStream(
-        `../img/brandsLogos/${name}.${extension}`
+        `../img/brandsLogos/${brandName}.${extension}`
       );
       stream.pipe(fileToWrite);
 
       // Creating new brand
-      const newBrand = new BrandModel({ name });
+      const newBrand = new BrandModel({
+        brandName,
+        brandCountry,
+        startYear,
+        endYear
+      });
       try {
         await newBrand.save();
       } catch (err) {
