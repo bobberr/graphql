@@ -36,6 +36,7 @@ module.exports.adminTypeDefs = adminTypeDefs = `
   type Brand {
     _id: ID
     brandName: String
+    errorCode: Int
   }
   
   type Test {
@@ -89,7 +90,8 @@ module.exports.rootAdmin = rootAdmin = {
       try {
         await newBrand.save();
       } catch (err) {
-        console.log(err);
+        console.error(err);
+        return err;
       }
       pubSub.publish(subscriptionEvents.BRAND_ADDED, { brandAdded: newBrand });
       return newBrand;

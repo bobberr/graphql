@@ -100,7 +100,9 @@ class BrandsList extends React.Component {
     const inputValue = e.target.value;
     let filteredBrands = this.state.brands;
     filteredBrands = filteredBrands.filter(brand => {
-      return brand.name.toLowerCase().search(inputValue.toLowerCase()) !== -1;
+      return (
+        brand.brandName.toLowerCase().search(inputValue.toLowerCase()) !== -1
+      );
     });
     this.setState({
       brandsToShow: filteredBrands,

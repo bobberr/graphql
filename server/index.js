@@ -6,12 +6,12 @@ const rootAdmin = require("./admin/admin").rootAdmin;
 const session = require("express-session");
 const secretObject = require("./admin/secrets");
 const { ApolloServer } = require("apollo-server-express");
-const MongoStore = require("connect-mongo")(session);
 const http = require("http");
+const sessionStore = require("./session-store");
 
 mongoose.connect(
-  secretObject.dbconnection,
-  { useNewUrlParser: true }
+  secretObject.dbconnection
+  // { useNewUrlParser: true }
 );
 
 const app = express();
@@ -22,7 +22,7 @@ app.use(
     secret: secretObject.sessionSecret,
     resave: false,
     saveUninitialized: false,
-    store: new MongoStore({ mongooseConnection: mongoose.connection }),
+    store: sessionStore,
     cookie: {
       maxAge: 7200000
     }

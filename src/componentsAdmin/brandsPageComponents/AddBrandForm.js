@@ -104,16 +104,20 @@ class AddBrandForm extends React.Component {
       if (!err) {
         const { brandName, brandCountry, startYear, endYear } = values;
         this.setState({ loading: true }, async () => {
-          await this.props.client.mutate({
-            mutation: addBrandMutation,
-            variables: {
-              brandName,
-              file: this.state.fileList[0],
-              brandCountry,
-              startYear,
-              endYear
-            }
-          });
+          try {
+            await this.props.client.mutate({
+              mutation: addBrandMutation,
+              variables: {
+                brandName,
+                file: this.state.fileList[0],
+                brandCountry,
+                startYear,
+                endYear
+              }
+            });
+          } catch (err) {
+            console.log(err);
+          }
           // Clear input values
           this.props.form.setFieldsValue({
             brandName: "",
