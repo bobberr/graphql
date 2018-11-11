@@ -22,7 +22,7 @@ const styles = {
     background: "#27293D",
     height: "100px",
     boxShadow: "0px 5px 5px 0px rgba(0,0,0,0.75)",
-    zIndex: 10000
+    zIndex: 1000
   },
   appTitle: {
     fontSize: "26px",

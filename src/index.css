@@ -3,3 +3,8 @@ body {
   padding: 0;
   font-family: Poppins, sans-serif;
 }
+
+/* Autocomplete background */
+.ant-select-selection {
+  background-color: transparent !important;
+}

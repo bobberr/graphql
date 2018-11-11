@@ -90,7 +90,9 @@ module.exports.rootAdmin = rootAdmin = {
       try {
         await newBrand.save();
       } catch (err) {
-        console.error(err);
+        if (err.code === 11000) {
+          return new Error("Brand duplication");
+        }
         return err;
       }
       pubSub.publish(subscriptionEvents.BRAND_ADDED, { brandAdded: newBrand });

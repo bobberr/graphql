@@ -3,9 +3,10 @@ import PropTypes from "prop-types";
 import { withApollo } from "react-apollo";
 import gql from "graphql-tag";
 import injectSheet from "react-jss";
-import { Input, Form, Button, AutoComplete } from "antd";
+import { Input, Form, Button, AutoComplete, message } from "antd";
 import UploadBrandButton from "./UploadBrandButton";
 import { listOfCountries } from "../../configs/listOfCountries";
+import graphqlMsgFromError from "../../utils/graphqlMsgFromError";
 
 const FormItem = Form.Item;
 
@@ -82,7 +83,8 @@ class AddBrandForm extends React.Component {
     loading: false,
     fileList: [],
     imageError: false,
-    countriesToShow: []
+    countriesToShow: [],
+    duplicatedBrand: false
   };
 
   // Set all countries for showing in autocomplete
@@ -116,7 +118,11 @@ class AddBrandForm extends React.Component {
               }
             });
           } catch (err) {
-            console.log(err);
+            if (graphqlMsgFromError(err).includes("Brand duplication")) {
+              message.error("Such brand exists");
+            } else {
+              message.error("other network error");
+            }
           }
           // Clear input values
           this.props.form.setFieldsValue({
