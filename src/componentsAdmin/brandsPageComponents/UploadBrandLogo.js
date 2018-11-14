@@ -6,7 +6,7 @@ const classes = {
   buttonContainer: {}
 };
 
-class UploadBrandButton extends React.Component {
+class UploadBrandLogo extends React.Component {
   state = {
     previewVisible: false,
     previewImage: ""
@@ -59,4 +59,4 @@ class UploadBrandButton extends React.Component {
   }
 }
 
-export default injectSheet(classes)(UploadBrandButton);
+export default injectSheet(classes)(UploadBrandLogo);

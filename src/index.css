@@ -8,3 +8,9 @@ body {
 .ant-select-selection {
   background-color: transparent !important;
 }
+
+.Form\(AddBrandForm\)-addBrandContainer-0-1-14
+  .ant-select-combobox
+  .ant-select-search__field {
+  color: #9a9a9a !important;
+}

@@ -4,9 +4,9 @@ import { withApollo } from "react-apollo";
 import gql from "graphql-tag";
 import injectSheet from "react-jss";
 import { Input, Form, Button, AutoComplete, message } from "antd";
-import UploadBrandButton from "./UploadBrandButton";
 import { listOfCountries } from "../../configs/listOfCountries";
 import graphqlMsgFromError from "../../utils/graphqlMsgFromError";
+import UploadBrandLogo from "./UploadBrandLogo";
 
 const FormItem = Form.Item;
 
@@ -30,15 +30,8 @@ const classes = {
       borderBottomColor: "#2590EC"
     }
   },
-  inputLabel: {
-    color: "#9a9a9a",
-    "&$inputLabelFocused": {
-      color: "#9a9a9a"
-    }
-  },
-  inputLabelFocused: {},
   inputRoot: {
-    color: "#9a9a9a",
+    color: "#9a9a9a !important",
     background: "transparent"
   },
   error: {
@@ -141,7 +134,7 @@ class AddBrandForm extends React.Component {
     });
   };
 
-  // Method is passed to UploadBrandButton for seting fileList
+  // Method is passed to UploadBrandLogo for seting fileList
   // to parent component for appropriate work of clearing fileList after submitting form
   setLogoFile = fileList => {
     this.setState({ fileList, imageError: false });
@@ -250,7 +243,7 @@ class AddBrandForm extends React.Component {
               />
             )}
           </FormItem>
-          <UploadBrandButton
+          <UploadBrandLogo
             fileList={this.state.fileList}
             onLogoUpload={this.setLogoFile}
           />

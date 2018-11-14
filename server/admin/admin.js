@@ -67,6 +67,24 @@ module.exports.rootAdmin = rootAdmin = {
       { brandName, file, brandCountry, startYear, endYear },
       req
     ) => {
+      // Creating new brand
+      const newBrand = new BrandModel({
+        brandName,
+        brandCountry,
+        startYear,
+        endYear
+      });
+
+      try {
+        await newBrand.save();
+      } catch (err) {
+        if (err.code === 11000) {
+          return new Error("Brand duplication");
+        }
+        return err;
+      }
+      pubSub.publish(subscriptionEvents.BRAND_ADDED, { brandAdded: newBrand });
+
       // Awaiting readable stream and filename from request
       const { stream, filename } = await file.originFileObj;
 
@@ -80,22 +98,6 @@ module.exports.rootAdmin = rootAdmin = {
       );
       stream.pipe(fileToWrite);
 
-      // Creating new brand
-      const newBrand = new BrandModel({
-        brandName,
-        brandCountry,
-        startYear,
-        endYear
-      });
-      try {
-        await newBrand.save();
-      } catch (err) {
-        if (err.code === 11000) {
-          return new Error("Brand duplication");
-        }
-        return err;
-      }
-      pubSub.publish(subscriptionEvents.BRAND_ADDED, { brandAdded: newBrand });
       return newBrand;
     }
   },
