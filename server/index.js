@@ -10,8 +10,8 @@ const http = require("http");
 const sessionStore = require("./session-store");
 
 mongoose.connect(
-  secretObject.dbconnection
-  // { useNewUrlParser: true }
+  secretObject.dbconnection,
+  { useNewUrlParser: true }
 );
 
 const app = express();

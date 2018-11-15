@@ -11,7 +11,7 @@ import { createUploadLink } from "apollo-upload-client";
 const cache = new InMemoryCache();
 const uri = "http://localhost:3001/graphql";
 
-const stateLink = withClientState({ resolvers, cache, defaults });
+const stateLink = withClientState({ cache, resolvers, defaults });
 
 const uploadLink = createUploadLink({ uri, credentials: "include" });
 
