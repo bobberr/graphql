@@ -6,6 +6,7 @@ import Loading from "../../components/Loading";
 import { withApollo } from "react-apollo";
 import injectSheet from "react-jss";
 import { Menu, Input, Icon } from "antd";
+import EditBrandModal from "./EditBrandModal";
 
 const styles = {
   listContainer: {
@@ -62,8 +63,7 @@ class BrandsList extends React.Component {
     brandToSearch: "",
     loading: true,
     brands: [],
-    brandsToShow: [],
-    activeBrand: {}
+    brandsToShow: []
   };
 
   // Getting list of all brands and subscribing for newly created brands
@@ -130,10 +130,14 @@ class BrandsList extends React.Component {
     // List items
     const brandListItems = brandsToShow.map(brand => {
       return (
-        <Menu.Item className={classes.menuItem} key={uuidv4()}>
+        <Menu.Item
+          className={classes.menuItem}
+          onClick={this.modal.showModal.bind(null, brand._id)}
+          key={uuidv4()}
+        >
           <span>{brand.brandName}</span>
           <Icon
-            type="delete"
+            type="edit"
             onClick={() => {
               console.log("fires");
             }}
@@ -161,9 +165,10 @@ class BrandsList extends React.Component {
               <p className={classes.hint}>There are no brands to display</p>
             ) : (
               // Else - render full list of brands
-              <Menu component="ul" theme="dark">
-                {brandListItems}
-              </Menu>
+              <div>
+                <Menu theme="dark">{brandListItems}</Menu>
+                <EditBrandModal ref={ref => (this.modal = ref)} />
+              </div>
             )}
           </div>
         )}
