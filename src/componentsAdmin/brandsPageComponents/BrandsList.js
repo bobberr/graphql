@@ -5,7 +5,7 @@ import uuidv4 from "uuid/v4";
 import Loading from "../../components/Loading";
 import { withApollo } from "react-apollo";
 import injectSheet from "react-jss";
-import { Menu, Input } from "antd";
+import { Menu, Input, Icon } from "antd";
 
 const styles = {
   listContainer: {
@@ -22,6 +22,19 @@ const styles = {
   hint: {
     fontSize: "14px",
     marginTop: "30px"
+  },
+  deleteIcon: {
+    opacity: 0,
+    fontSize: "24px !important",
+    transition: ["opacity"],
+    transitionDuration: "300"
+  },
+  menuItem: {
+    "&:hover": {
+      "& $deleteIcon": {
+        opacity: 1
+      }
+    }
   }
 };
 
@@ -117,8 +130,15 @@ class BrandsList extends React.Component {
     // List items
     const brandListItems = brandsToShow.map(brand => {
       return (
-        <Menu.Item key={uuidv4()}>
+        <Menu.Item className={classes.menuItem} key={uuidv4()}>
           <span>{brand.brandName}</span>
+          <Icon
+            type="delete"
+            onClick={() => {
+              console.log("fires");
+            }}
+            className={classes.deleteIcon}
+          />
         </Menu.Item>
       );
     });
