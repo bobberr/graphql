@@ -35,13 +35,6 @@ const BRANDS_SUBSCRIPTION = gql`
   }
 `;
 
-const setActiveBrandMutation = gql`
-  mutation setActiveBrand($_id: String!, $brandName: String!) {
-    setActiveBrand(_id: $_id, brandName: $brandName, __typename: $__typename)
-      @client
-  }
-`;
-
 const query = gql`
   query getAllBrands {
     getAllBrands {
@@ -118,27 +111,13 @@ class BrandsList extends React.Component {
     });
   };
 
-  _onBrandItemClick = activeBrand => {
-    const { _id, brandName } = activeBrand;
-    this.props.client.mutate({
-      mutation: setActiveBrandMutation,
-      variables: {
-        _id: _id,
-        brandName
-      }
-    });
-  };
-
   render() {
     const { classes } = this.props;
     const { brandsToShow } = this.state;
     // List items
     const brandListItems = brandsToShow.map(brand => {
       return (
-        <Menu.Item
-          key={uuidv4()}
-          onClick={this._onBrandItemClick.bind(null, brand)}
-        >
+        <Menu.Item key={uuidv4()}>
           <span>{brand.brandName}</span>
         </Menu.Item>
       );

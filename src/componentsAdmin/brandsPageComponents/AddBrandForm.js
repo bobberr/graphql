@@ -114,7 +114,7 @@ class AddBrandForm extends React.Component {
             if (graphqlMsgFromError(err).includes("Brand duplication")) {
               message.error("Such brand exists");
             } else {
-              message.error("other network error");
+              message.error("Other network error");
             }
           }
           // Clear input values
