@@ -17,6 +17,7 @@ module.exports.adminTypeDefs = adminTypeDefs = `
     adminLogIn(login: String!, password: String!): Boolean
     checkAuth: Boolean
     getAllBrands: [Brand]
+    getBrandInfo(brandId: String!): Brand
   }
 
   type Mutation {
@@ -27,6 +28,13 @@ module.exports.adminTypeDefs = adminTypeDefs = `
       startYear: Int!
       endYear: Int!
     ): Brand
+    editBrand(
+      newBrandName: String!
+      newBrandCountry: String!
+      newStartYear: Int!
+      newEndYear: Int!
+      _id: String!
+    ) : String
   }
 
   type Subscription {
@@ -34,9 +42,11 @@ module.exports.adminTypeDefs = adminTypeDefs = `
   }
 
   type Brand {
-    _id: ID
-    brandName: String
-    errorCode: Int
+    _id: String!
+    brandName: String!
+    brandCountry: String!
+    startYear: Int!
+    endYear: Int!
   }
   
   type Test {
@@ -49,6 +59,7 @@ module.exports.rootAdmin = rootAdmin = {
     checkAuth: (obj, arg, { session }) => {
       return session.userId ? true : false;
     },
+
     adminLogIn: (obj, arg, { session }) => {
       if (arg.login === "admin" && arg.password === "admin") {
         session.userId = uuidv4();
@@ -57,8 +68,13 @@ module.exports.rootAdmin = rootAdmin = {
         return false;
       }
     },
+
     getAllBrands: (obj, arg, req) => {
       return BrandModel.find({});
+    },
+
+    getBrandInfo: (obj, { brandId }, req) => {
+      return BrandModel.findById(brandId).exec();
     }
   },
   Mutation: {
@@ -99,6 +115,31 @@ module.exports.rootAdmin = rootAdmin = {
       stream.pipe(fileToWrite);
 
       return newBrand;
+    },
+
+    editBrand: async (
+      obj,
+      { newBrandName, newBrandCountry, newStartYear, newEndYear, _id },
+      req
+    ) => {
+      try {
+        await BrandModel.update(
+          { _id },
+          {
+            $set: {
+              brandName: newBrandName,
+              brandCountry: newBrandCountry,
+              startYear: newStartYear,
+              endYear: newEndYear
+            }
+          }
+        );
+      } catch (err) {
+        if (err.code === 11000) {
+          return new Error("Brand duplication");
+        }
+        return err;
+      }
     }
   },
   Subscription: {

@@ -5,8 +5,9 @@ import uuidv4 from "uuid/v4";
 import Loading from "../../components/Loading";
 import { withApollo } from "react-apollo";
 import injectSheet from "react-jss";
-import { Menu, Input, Icon } from "antd";
+import { Menu, Input, Icon, message } from "antd";
 import EditBrandModal from "./EditBrandModal";
+import graphqlMsgFromError from "../../utils/graphqlMsgFromError";
 
 const styles = {
   listContainer: {
@@ -49,7 +50,7 @@ const BRANDS_SUBSCRIPTION = gql`
   }
 `;
 
-const query = gql`
+const getAllBrandsQuery = gql`
   query getAllBrands {
     getAllBrands {
       _id
@@ -58,18 +59,52 @@ const query = gql`
   }
 `;
 
+const getBrandInfoQuery = gql`
+  query getBrandInfo($brandId: String!) {
+    getBrandInfo(brandId: $brandId) {
+      brandName
+      brandCountry
+      startYear
+      endYear
+      _id
+    }
+  }
+`;
+
+const editBrandMutation = gql`
+  mutation editBrand(
+    $newBrandName: String!
+    $newBrandCountry: String!
+    $newStartYear: Int!
+    $newEndYear: Int!
+    $_id: String!
+  ) {
+    editBrand(
+      newBrandName: $newBrandName
+      newBrandCountry: $newBrandCountry
+      newStartYear: $newStartYear
+      newEndYear: $newEndYear
+      _id: $_id
+    )
+  }
+`;
+
 class BrandsList extends React.Component {
   state = {
     brandToSearch: "",
     loading: true,
     brands: [],
-    brandsToShow: []
+    brandsToShow: [],
+    visibleModal: false,
+    confirmModalLoading: false,
+    brandToEdit: {},
+    brandNameDuplication: false
   };
 
   // Getting list of all brands and subscribing for newly created brands
   componentDidMount = async () => {
     const queryResult = await this.props.client.query({
-      query,
+      query: getAllBrandsQuery,
       fetchPolicy: "network-only"
     });
     this.setState({
@@ -124,15 +159,72 @@ class BrandsList extends React.Component {
     });
   };
 
+  // Modal methods
+  _onMenuItemClick = async brandId => {
+    const queryResult = await this.props.client.query({
+      query: getBrandInfoQuery,
+      variables: {
+        brandId
+      },
+      fetchPolicy: "network-only"
+    });
+    this.setState({
+      brandToEdit: queryResult.data.getBrandInfo,
+      visibleModal: true
+    });
+  };
+
+  _onModalCancel = () => {
+    this.setState({ visibleModal: false, brandToEdit: {} });
+  };
+
+  _onModalOk = (
+    newBrandName,
+    newBrandCountry,
+    newStartYear,
+    newEndYear,
+    _id
+  ) => {
+    this.setState({ confirmModalLoading: true }, async () => {
+      try {
+        await this.props.client.mutate({
+          mutation: editBrandMutation,
+          variables: {
+            newBrandName,
+            newBrandCountry,
+            newStartYear,
+            newEndYear,
+            _id
+          }
+        });
+      } catch (err) {
+        if (graphqlMsgFromError(err).includes("Brand duplication")) {
+          this.setState({
+            confirmModalLoading: false,
+            brandNameDuplication: true
+          });
+        } else {
+          message.error("Other network error");
+        }
+      }
+    });
+  };
+
   render() {
     const { classes } = this.props;
-    const { brandsToShow } = this.state;
+    const {
+      brandsToShow,
+      visibleModal,
+      confirmModalLoading,
+      brandToEdit,
+      brandNameDuplication
+    } = this.state;
     // List items
     const brandListItems = brandsToShow.map(brand => {
       return (
         <Menu.Item
           className={classes.menuItem}
-          onClick={this.modal.showModal.bind(null, brand._id)}
+          onClick={this._onMenuItemClick.bind(null, brand._id)}
           key={uuidv4()}
         >
           <span>{brand.brandName}</span>
@@ -167,7 +259,14 @@ class BrandsList extends React.Component {
               // Else - render full list of brands
               <div>
                 <Menu theme="dark">{brandListItems}</Menu>
-                <EditBrandModal ref={ref => (this.modal = ref)} />
+                <EditBrandModal
+                  visible={visibleModal}
+                  confirmLoading={confirmModalLoading}
+                  brandToEdit={brandToEdit}
+                  handleCancel={this._onModalCancel}
+                  handleOk={this._onModalOk}
+                  brandNameDuplication={brandNameDuplication}
+                />
               </div>
             )}
           </div>
