@@ -55,18 +55,9 @@ const getAllBrandsQuery = gql`
     getAllBrands {
       _id
       brandName
-    }
-  }
-`;
-
-const getBrandInfoQuery = gql`
-  query getBrandInfo($brandId: String!) {
-    getBrandInfo(brandId: $brandId) {
-      brandName
       brandCountry
       startYear
       endYear
-      _id
     }
   }
 `;
@@ -160,16 +151,9 @@ class BrandsList extends React.Component {
   };
 
   // Modal methods
-  _onMenuItemClick = async brandId => {
-    const queryResult = await this.props.client.query({
-      query: getBrandInfoQuery,
-      variables: {
-        brandId
-      },
-      fetchPolicy: "network-only"
-    });
+  _onMenuItemClick = brandObject => {
     this.setState({
-      brandToEdit: queryResult.data.getBrandInfo,
+      brandToEdit: brandObject,
       visibleModal: true
     });
   };
@@ -224,7 +208,7 @@ class BrandsList extends React.Component {
       return (
         <Menu.Item
           className={classes.menuItem}
-          onClick={this._onMenuItemClick.bind(null, brand._id)}
+          onClick={this._onMenuItemClick.bind(null, brand)}
           key={uuidv4()}
         >
           <span>{brand.brandName}</span>

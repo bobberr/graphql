@@ -17,7 +17,6 @@ module.exports.adminTypeDefs = adminTypeDefs = `
     adminLogIn(login: String!, password: String!): Boolean
     checkAuth: Boolean
     getAllBrands: [Brand]
-    getBrandInfo(brandId: String!): Brand
   }
 
   type Mutation {
@@ -71,10 +70,6 @@ module.exports.rootAdmin = rootAdmin = {
 
     getAllBrands: (obj, arg, req) => {
       return BrandModel.find({});
-    },
-
-    getBrandInfo: (obj, { brandId }, req) => {
-      return BrandModel.findById(brandId).exec();
     }
   },
   Mutation: {
