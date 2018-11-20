@@ -33,7 +33,7 @@ module.exports.adminTypeDefs = adminTypeDefs = `
       newStartYear: Int!
       newEndYear: Int!
       _id: String!
-    ) : String
+    ) : Boolean
   }
 
   type Subscription {
@@ -69,6 +69,7 @@ module.exports.rootAdmin = rootAdmin = {
     },
 
     getAllBrands: (obj, arg, req) => {
+      console.log("fires");
       return BrandModel.find({});
     }
   },
@@ -135,6 +136,7 @@ module.exports.rootAdmin = rootAdmin = {
         }
         return err;
       }
+      return true;
     }
   },
   Subscription: {

@@ -18,19 +18,6 @@ class EditBrandModal extends React.Component {
     countriesToShow: []
   };
 
-  componentWillReceiveProps = nextProps => {
-    if (
-      nextProps.brandNameDuplication &&
-      nextProps.brandNameDuplication !== this.props.brandNameDuplication
-    ) {
-      this.props.form.setFields({
-        newBrandName: {
-          errors: [{ message: "Such brand exists" }]
-        }
-      });
-    }
-  };
-
   // Filtering among the countries
   _onSearchCountry = value => {
     const filteredCountries = listOfCountries.filter(country => {
@@ -87,12 +74,19 @@ class EditBrandModal extends React.Component {
           newEndYear,
           brandToEdit._id
         );
+        form.resetFields();
       }
     });
   };
 
   render() {
-    const { visible, confirmLoading, brandToEdit, classes } = this.props;
+    const {
+      visible,
+      confirmLoading,
+      brandToEdit,
+      classes,
+      brandNameDuplication
+    } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { brandName, brandCountry, startYear, endYear } = brandToEdit;
     return (
@@ -108,7 +102,12 @@ class EditBrandModal extends React.Component {
           <div>
             <p>Edit information about {brandName}</p>
             <Form>
-              <FormItem>
+              <FormItem
+                validateStatus={brandNameDuplication ? "error" : null}
+                help={
+                  brandNameDuplication ? "Brand with such name exists" : null
+                }
+              >
                 {/* Validating input fields */}
                 {getFieldDecorator("newBrandName", {
                   rules: [

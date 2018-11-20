@@ -159,7 +159,11 @@ class BrandsList extends React.Component {
   };
 
   _onModalCancel = () => {
-    this.setState({ visibleModal: false, brandToEdit: {} });
+    this.setState({
+      visibleModal: false,
+      brandToEdit: {},
+      brandNameDuplication: false
+    });
   };
 
   _onModalOk = (
@@ -179,8 +183,14 @@ class BrandsList extends React.Component {
             newStartYear,
             newEndYear,
             _id
-          }
+          },
+          refetchQueries: ["checkAuth"]
         });
+        // this.setState({
+        //   confirmModalLoading: false,
+        //   brandNameDuplication: false,
+        //   visibleModal: false
+        // });
       } catch (err) {
         if (graphqlMsgFromError(err).includes("Brand duplication")) {
           this.setState({
