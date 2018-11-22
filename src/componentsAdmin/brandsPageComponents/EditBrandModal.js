@@ -1,8 +1,10 @@
 import React from "react";
-import { Modal, Form, Input, AutoComplete } from "antd";
+import { Modal, Form, Input, AutoComplete, message } from "antd";
 import Loading from "../../components/Loading";
 import injectSheet from "react-jss";
 import { listOfCountries } from "../../configs/listOfCountries";
+import graphqlMsgFromError from "../../utils/graphqlMsgFromError";
+import gql from "graphql-tag";
 
 const FormItem = Form.Item;
 
@@ -13,9 +15,69 @@ const classes = {
   }
 };
 
+const editBrandMutation = gql`
+  mutation editBrand(
+    $newBrandName: String!
+    $newBrandCountry: String!
+    $newStartYear: Int!
+    $newEndYear: Int!
+    $_id: String!
+  ) {
+    editBrand(
+      newBrandName: $newBrandName
+      newBrandCountry: $newBrandCountry
+      newStartYear: $newStartYear
+      newEndYear: $newEndYear
+      _id: $_id
+    )
+  }
+`;
+
 class EditBrandModal extends React.Component {
   state = {
-    countriesToShow: []
+    countriesToShow: [],
+    visibleModal: false,
+    confirmModalLoading: false,
+    brandNameDuplication: false
+  };
+
+  _onModalOk = (
+    newBrandName,
+    newBrandCountry,
+    newStartYear,
+    newEndYear,
+    _id
+  ) => {
+    this.setState({ confirmModalLoading: true }, async () => {
+      try {
+        await this.props.client.mutate({
+          mutation: editBrandMutation,
+          variables: {
+            newBrandName,
+            newBrandCountry,
+            newStartYear,
+            newEndYear,
+            _id
+          }
+        });
+        this._getAllBrands();
+        this.setState({
+          confirmModalLoading: false,
+          brandNameDuplication: false,
+          visibleModal: false,
+          brandToEdit: {}
+        });
+      } catch (err) {
+        if (graphqlMsgFromError(err).includes("Brand duplication")) {
+          this.setState({
+            confirmModalLoading: false,
+            brandNameDuplication: true
+          });
+        } else {
+          message.error("Other network error");
+        }
+      }
+    });
   };
 
   // Filtering among the countries
@@ -52,13 +114,13 @@ class EditBrandModal extends React.Component {
   };
 
   _handleCancel = () => {
-    const { form, handleCancel } = this.props;
+    const { form, onClose } = this.props;
+    onClose();
     form.resetFields();
-    handleCancel();
   };
 
   _handleOk = () => {
-    const { form, handleOk, brandToEdit } = this.props;
+    const { form, handleOk, brandToEdit, brandNameDuplication } = this.props;
     form.validateFields((err, values) => {
       if (!err) {
         const {
@@ -74,26 +136,22 @@ class EditBrandModal extends React.Component {
           newEndYear,
           brandToEdit._id
         );
+        console.log(brandNameDuplication);
         form.resetFields();
       }
     });
   };
 
   render() {
-    const {
-      visible,
-      confirmLoading,
-      brandToEdit,
-      classes,
-      brandNameDuplication
-    } = this.props;
+    const { brandToEdit, classes } = this.props;
+    const { confirmLoading } = this.state;
     const { getFieldDecorator } = this.props.form;
     const { brandName, brandCountry, startYear, endYear } = brandToEdit;
     return (
       <Modal
         className={classes.modalRoot}
         centered
-        visible={visible}
+        visible={brandToEdit.brandName ? true : false}
         onCancel={this._handleCancel}
         confirmLoading={confirmLoading}
         onOk={this._handleOk}
@@ -102,12 +160,7 @@ class EditBrandModal extends React.Component {
           <div>
             <p>Edit information about {brandName}</p>
             <Form>
-              <FormItem
-                validateStatus={brandNameDuplication ? "error" : null}
-                help={
-                  brandNameDuplication ? "Brand with such name exists" : null
-                }
-              >
+              <FormItem>
                 {/* Validating input fields */}
                 {getFieldDecorator("newBrandName", {
                   rules: [
