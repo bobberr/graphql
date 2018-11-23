@@ -140,13 +140,18 @@ class BrandsList extends React.Component {
   };
 
   _onModalClose = () => {
-    this.setState({
-      brandToEdit: {}
-    });
+    this.setState(
+      {
+        brandToEdit: {}
+      },
+      () => {
+        this._getAllBrands();
+      }
+    );
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, client } = this.props;
     const { brandsToShow, brandToEdit } = this.state;
     // List items
     const brandListItems = brandsToShow.map(brand => {
@@ -191,6 +196,7 @@ class BrandsList extends React.Component {
                 <EditBrandModal
                   brandToEdit={brandToEdit}
                   onClose={this._onModalClose}
+                  client={client}
                 />
               </div>
             )}

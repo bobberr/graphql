@@ -36,48 +36,7 @@ const editBrandMutation = gql`
 class EditBrandModal extends React.Component {
   state = {
     countriesToShow: [],
-    visibleModal: false,
-    confirmModalLoading: false,
-    brandNameDuplication: false
-  };
-
-  _onModalOk = (
-    newBrandName,
-    newBrandCountry,
-    newStartYear,
-    newEndYear,
-    _id
-  ) => {
-    this.setState({ confirmModalLoading: true }, async () => {
-      try {
-        await this.props.client.mutate({
-          mutation: editBrandMutation,
-          variables: {
-            newBrandName,
-            newBrandCountry,
-            newStartYear,
-            newEndYear,
-            _id
-          }
-        });
-        this._getAllBrands();
-        this.setState({
-          confirmModalLoading: false,
-          brandNameDuplication: false,
-          visibleModal: false,
-          brandToEdit: {}
-        });
-      } catch (err) {
-        if (graphqlMsgFromError(err).includes("Brand duplication")) {
-          this.setState({
-            confirmModalLoading: false,
-            brandNameDuplication: true
-          });
-        } else {
-          message.error("Other network error");
-        }
-      }
-    });
+    confirmModalLoading: false
   };
 
   // Filtering among the countries
@@ -115,12 +74,13 @@ class EditBrandModal extends React.Component {
 
   _handleCancel = () => {
     const { form, onClose } = this.props;
-    onClose();
     form.resetFields();
+    onClose();
   };
 
   _handleOk = () => {
-    const { form, handleOk, brandToEdit, brandNameDuplication } = this.props;
+    const { form, brandToEdit, onClose } = this.props;
+    const { _id } = brandToEdit;
     form.validateFields((err, values) => {
       if (!err) {
         const {
@@ -129,15 +89,42 @@ class EditBrandModal extends React.Component {
           newStartYear,
           newEndYear
         } = values;
-        handleOk(
-          newBrandName,
-          newBrandCountry,
-          newStartYear,
-          newEndYear,
-          brandToEdit._id
-        );
-        console.log(brandNameDuplication);
-        form.resetFields();
+        this.setState({ confirmLoading: true }, async () => {
+          try {
+            await this.props.client.mutate({
+              mutation: editBrandMutation,
+              variables: {
+                newBrandName,
+                newBrandCountry,
+                newStartYear,
+                newEndYear,
+                _id
+              }
+            });
+            this.setState(
+              {
+                confirmLoading: false
+              },
+              () => {
+                onClose();
+                form.resetFields();
+              }
+            );
+          } catch (err) {
+            if (graphqlMsgFromError(err).includes("Brand duplication")) {
+              this.setState(
+                {
+                  confirmLoading: false
+                },
+                () => {
+                  message.error("Such brand name exists");
+                }
+              );
+            } else {
+              message.error("Other network error");
+            }
+          }
+        });
       }
     });
   };
